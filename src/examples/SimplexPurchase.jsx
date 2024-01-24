@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 const SimplexPurchase = ({defaultAmount}) => {
   useEffect(() => {
     // Construct the Simplex URL with parameters
-    const simplexURL = 'https://iframe.simplex-affiliates.com/form.js';
+    const simplexURL = 'https://iframe.sandbox.test-simplexcc.com/form.js';
     const params = new URLSearchParams({
       crypto: 'AGIX',
       fiat: 'EUR',
