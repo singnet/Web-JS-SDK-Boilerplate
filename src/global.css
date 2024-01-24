@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'alias';
+    src: url('../public/Purista.ttf');
+    font-weight: normal; /* Define weight, could also be 'bold', 'bolder', etc. */
+    font-style: normal; 
+}
+
+
+
+
+  .ConnectButtonClass button, 
+.ConnectButtonClass div, 
+.ConnectButtonClass span {
+    font-family: 'alias' !important;
+}
+
+.ConnectedButtonClass button, 
+.ConnectedButtonClass div, 
+.ConnectedButtonClass span {
+    font-family: 'alias' !important;
+    font-size: 10px !important;
+}
