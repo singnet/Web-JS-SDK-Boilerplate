@@ -14,13 +14,12 @@
     font-family: 'alias' !important;
 }
 
-.ConnectedButtonClass button, 
-.ConnectedButtonClass div{
-        display: 'flex';
-        flex-direction: 'column'; 
-        gap: '10px';
-        align-items: 'center';
+.ConnectedButtonClass button{
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
 }
+.ConnectedButtonClass div,
 .ConnectedButtonClass span {
     font-family: 'alias' !important;
     font-size: 10px !important;
