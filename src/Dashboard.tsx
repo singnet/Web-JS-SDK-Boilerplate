@@ -100,6 +100,10 @@ export function Dashboard({ children, links }: DashboardProps) {
         watch: true,
       });
 
+    // Format ETH balance to 4 decimal places
+    const formattedEthBalance = ethBalance ? parseFloat(ethBalance.formatted).toFixed(4) : 'Loading...';
+
+
     useEffect(() => {
         if (isConnected) {
             const zeroDevWeb3Auth = new ZeroDevWeb3Auth([process.env.REACT_APP_ZERODEV_PROJECT_ID || '46278c0a-5be6-42d6-974d-5863fc4cd132'])
@@ -143,8 +147,8 @@ export function Dashboard({ children, links }: DashboardProps) {
                         ))}
                     </Navbar.Section>
                     <Navbar.Section>
-                      <p>ETH Balance: {ethBalance?.formatted ?? 'Loading...'} ETH</p>
-                      <p>AGIX Balance: {agixBalance?.formatted ?? 'Loading...'} AGIX</p>
+                      <h1><b>ETH Balance:</b> {formattedEthBalance ?? 'Loading...'} ETH</h1>
+                      <h1><b>AGIX Balance:</b> {agixBalance?.formatted ?? 'Loading...'} AGIX</h1>
                     </Navbar.Section>
                     {mdMatches && <Navbar.Section className={classes.footer}>
                     <div className='ConnectedButtonClass'>
