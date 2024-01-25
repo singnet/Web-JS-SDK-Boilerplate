@@ -8,19 +8,22 @@
 
 
 
-  .ConnectButtonClass button, 
+  .ConnectButtonClass button,
 .ConnectButtonClass div, 
 .ConnectButtonClass span {
     font-family: 'alias' !important;
 }
 
-.ConnectedButtonClass button{
-    display: block;
-    width: 100%;
-    margin-bottom: 10px;
-}
+
 .ConnectedButtonClass div,
 .ConnectedButtonClass span {
     font-family: 'alias' !important;
     font-size: 10px !important;
+}
+
+#root > div > div > div > nav > div.mantine-10o78yv > div > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    align-items: center; 
 }
