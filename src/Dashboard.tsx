@@ -147,13 +147,21 @@ export function Dashboard({ children, links }: DashboardProps) {
                         ))}
                     </Navbar.Section>
                     <Navbar.Section>
-                      <h1><b>ETH Balance:</b> {formattedEthBalance ?? 'Loading...'} ETH</h1>
-                      <h1><b>AGIX Balance:</b> {agixBalance?.formatted ?? 'Loading...'} AGIX</h1>
+                      <h3><b>ETH Balance:</b> {formattedEthBalance} ETH</h3>
+                      <h3><b>AGIX Balance:</b> {agixBalance?.formatted ?? 'Loading...'} AGIX</h3>
                     </Navbar.Section>
                     {mdMatches && <Navbar.Section className={classes.footer}>
-                    <div className='ConnectedButtonClass'>
+                    <div 
+                        className='ConnectedButtonClass' 
+                        style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: '10px',
+                        alignItems: 'center' // Add this if you want to center the buttons
+                        }}
+                    >
                         <ConnectButton />
-                        </div>
+                    </div>
                     </Navbar.Section>}
                 </Navbar>
             }
