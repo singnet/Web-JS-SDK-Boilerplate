@@ -151,15 +151,7 @@ export function Dashboard({ children, links }: DashboardProps) {
                       <h3><b>AGIX Balance:</b> {agixBalance?.formatted ?? 'Loading...'} AGIX</h3>
                     </Navbar.Section>
                     {mdMatches && <Navbar.Section className={classes.footer}>
-                    <div 
-                        className='ConnectedButtonClass' 
-                        style={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        gap: '10px',
-                        alignItems: 'center' // Add this if you want to center the buttons
-                        }}
-                    >
+                    <div className='ConnectedButtonClass' >
                         <ConnectButton />
                     </div>
                     </Navbar.Section>}
