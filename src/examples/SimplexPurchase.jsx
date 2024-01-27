@@ -12,7 +12,6 @@ const SimplexPurchase = () => {
       script.src = 'https://iframe.sandbox.test-simplexcc.com/form.js';
       script.async = true;
       document.body.appendChild(script);
-
       // Initialize the Simplex form after the script is loaded
       script.onload = () => {
         if (window.simplex) {

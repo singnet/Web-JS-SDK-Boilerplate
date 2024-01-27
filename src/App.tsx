@@ -12,7 +12,7 @@ import SimplexPurchase from './examples/SimplexPurchase';
 
 
 const links = [
-  { path: '/gas-free', label: 'Pay Gas for Users', element: <SponsoredGasExample /> },
+  // { path: '/gas-free', label: 'Pay Gas for Users', element: <SponsoredGasExample /> },
   { path: '/service', label: 'AI Services', element: <BatchExample /> },
   { path: '/simplex-purchase', label: 'Purchase AGIX tokens', element: <SimplexPurchase /> },
 ];
