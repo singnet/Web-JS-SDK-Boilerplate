@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { TextInput, Button, Space, Flex } from "@mantine/core";
+import { Button, Space, Flex, Textarea } from "@mantine/core";
 import SnetSDK from "snet-sdk-web";
-import { example } from "../assets/example_pb_service";
+import { example } from "../assets/summary_pb_service";
 import { config } from "./config";
 import { useAccount } from "wagmi";
 
 export default function ExampleService() {
+  const defaultInput = 'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
   const [logs, setLogs] = useState([]);
-  const [firstNumber, setFirstNumber] = useState(10);
-  const [secondNumber, setSecondNumber] = useState(20);
-  const {connector, address} = useAccount();
+  const [userInput, setUserInput] = useState(defaultInput);
+  const { connector, address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState("");
 
   const logToScreen = (...args) => {
     let method = "log";
@@ -28,44 +28,44 @@ export default function ExampleService() {
         method = arg;
       }
     });
-    
-
-    if(message.includes("LOG: ")) {
-        setLogs((prevLogs) => [...prevLogs, { method, message }]);
-    }
+    setLogs((prevLogs) => [...prevLogs, { method, message }]);
   };
-
 
   const runService = async () => {
     setLogs([]);
     setIsLoading(true);
-    setResult('');
-    const provider = await connector.getProvider();
-    const sdk = new SnetSDK({ ...config, web3Provider: provider });
+    setResult("");
 
-    const client = await sdk.createServiceClient("masp", "masp_s1");
+    try {
+      const provider = await connector.getProvider();
+      const sdk = new SnetSDK({ ...config, web3Provider: provider });
+      const client = await sdk.createServiceClient("snet", "news-summary");
 
-    const request = new example.Calculator.add.requestType();
-    request.setA(firstNumber);
-    request.setB(secondNumber);
+      const request = new example.TextSummary.summary.requestType();
+      request.setArticleContent(userInput);
 
-    const invokeOptions = {
-      request: request,
-      debug: true,
-      transport: undefined,
-      onEnd: (response) => {
-        setIsLoading(false);
-        if (response.status === 0) {
-          const value = response.message.getValue();
-          setResult(value);
-          console.log("--- Service Response ---", value.toString());
-          return;
-        }
-        console.error("error occured", response.status, response.message);
-      },
-    };
+      const invokeOptions = {
+        request: request,
+        debug: true,
+        transport: undefined,
+        onEnd: (response) => {
+          setIsLoading(false);
+          if (response.status === 0) {
+            const value = response.message.getArticleSummary();
+            setResult(value);
+            console.log("--- Service Response ---", value.toString());
+            return;
+          }
+          console.error("error occured", response.status, response.message);
+        },
+      };
 
-    await client.unary(example.Calculator.add, invokeOptions);
+      await client.unary(example.TextSummary.summary, invokeOptions);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -73,13 +73,15 @@ export default function ExampleService() {
     ['log', 'error', 'warn', 'info', 'debug'].forEach(method => {
         const originalConsoleMethod = console[method];
         console[method] = (...args) => {
-            originalConsoleMethod.apply(console, args);
+            originalConsoleMethod(...args);
             logToScreen(...args)
         };
     });
+
+
     // Clean-up function to restore original console methods when the component unmounts
     return () => {
-        ['log', 'error', 'warn', 'info', 'debug'].forEach(method => {
+      ['log', 'error', 'warn', 'info', 'debug'].forEach(method => {
             console[method] = console[method].__proto__;
         });
     };
@@ -88,27 +90,19 @@ export default function ExampleService() {
   return (
     <div>
       <p>
-        Orgnization name: masp <br />
-        Service name: masp_s1 <br />
-        Network: Goerli
+        Orgnization name: snet <br />
+        Service name: news-summary <br />
+        Network: Ethereum Mainnet
       </p>
-      <div style={{maxWidth: '245px'}}>
-        <TextInput
-            type="text"
-            placeholder="Enter first number"
-            value={firstNumber}
-            onChange={(e) => {
-            setFirstNumber(+e.target.value);
-            }}
-        />
-        <Space h="sm" />
-        <TextInput
-            type="text"
-            placeholder="Enter second number"
-            value={secondNumber}
-            onChange={(e) => {
-            setSecondNumber(+e.target.value);
-            }}
+      <div style={{ maxWidth: "400px" }}>
+        <Textarea
+          rows={4}
+          autosize
+          placeholder="Enter text"
+          value={userInput}
+          onChange={(e) => {
+            setUserInput(e.target.value);
+          }}
         />
       </div>
       <Space h="sm" />
@@ -122,15 +116,14 @@ export default function ExampleService() {
         <Button
           loading={isLoading}
           disabled={!address}
-          variant="filled" 
+          variant="filled"
           color="rgba(127, 27, 164, 1)"
           className="btn-primary"
           onClick={() => {
             runService();
           }}
         >
-          {" "}
-          Add Numbers{" "}
+          Summarize
         </Button>
         <Button
           color="gray"
@@ -138,17 +131,21 @@ export default function ExampleService() {
             setLogs([]);
           }}
         >
-          {" "}
-          Clear Log{" "}
+          Clear Log
         </Button>
       </Flex>
-      {
-        result && <p><b>Result: {result}</b></p>
-      }
+      {result && (
+        <p>
+          <b>Result: {result}</b>
+        </p>
+      )}
       {logs.map((log, index) => (
         <p
           key={index}
-          style={{ color: log.method === "error" ? "red" : "#f1f1f1", margin: '3px' }}
+          style={{
+            color: log.method === "error" ? "red" : "#f1f1f1",
+            margin: "3px",
+          }}
         >
           <strong>{log.method.toUpperCase()}:</strong> {log.message}
         </p>

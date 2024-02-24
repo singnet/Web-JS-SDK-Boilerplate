@@ -89,7 +89,7 @@ export function Dashboard({ children, links }: DashboardProps) {
 
   // Fetching wallet balances
   const { address } = useAccount();
-  const AGIXTokenAddress = '0xdd4292864063d0DA1F294AC65D74d55a44F4766C'; // Replace with AGIX token address
+  const AGIXTokenAddress = '0x5B7533812759B45C2B44C19e320ba2cD2681b542'; // Replace with AGIX token address
   const { data: ethBalance } = useBalance({
     address: address,
     watch: true
