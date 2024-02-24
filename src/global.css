@@ -27,3 +27,14 @@
     gap: 10px; 
     align-items: center; 
 }
+
+.btn-primary {
+    background-color: #7F1BA4;
+    border-radius: 3px;
+    &:disabled {
+        background-color: rgba(127, 27, 164, 0.5);
+    }
+    &:hover {
+        background-color: #fa9a3b;
+    }
+}

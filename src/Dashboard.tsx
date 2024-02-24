@@ -51,7 +51,7 @@ const useStyles = createStyles((theme, _params) => {
       alignItems: 'center',
       textDecoration: 'none',
       fontSize: theme.fontSizes.md,
-      color: theme.black,
+      color: '#fff',
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
       marginBottom: `${theme.spacing.xs}px`,
       borderRadius: theme.radius.md,
@@ -67,7 +67,7 @@ const useStyles = createStyles((theme, _params) => {
     linkActive: {
       '&, &:hover': {
         backgroundColor: theme.black,
-        color: '#7F1BA4'
+        color: '#fff'
       }
     }
   };
