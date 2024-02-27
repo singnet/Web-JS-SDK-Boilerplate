@@ -1,40 +1,80 @@
+:root {
+  --base-font: "Inter", sans-serif;
+  --primary-color: #7f1ba4;
+  --color-gray: #161618;
+  --border-radius: 10px;
+}
+
 @font-face {
-    font-family: 'alias';
-    src: url('../public/Purista.ttf');
-    font-weight: normal; /* Define weight, could also be 'bold', 'bolder', etc. */
-    font-style: normal; 
+  font-family: var(--base-font);
+  src: url("../public/Purista.ttf");
+  font-weight: normal; /* Define weight, could also be 'bold', 'bolder', etc. */
+  font-style: normal;
 }
 
-
-
-
-  .ConnectButtonClass button,
-.ConnectButtonClass div, 
-.ConnectButtonClass span {
-    font-family: 'alias' !important;
+.ConnectButtonClass button,
+.ConnectButtonClass div,
+.ConnectButtonClass span { 
+  font-family: "Inter" !important;
 }
-
 
 .ConnectedButtonClass div,
 .ConnectedButtonClass span {
-    font-family: 'alias' !important;
-    font-size: 10px !important;
+  font-family: "Inter" !important;
+  font-size: 10px !important;
 }
 
 #root > div > div > div > nav > div.mantine-10o78yv > div > div {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; 
-    align-items: center; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
 }
 
 .btn-primary {
-    background-color: #7F1BA4;
-    border-radius: 3px;
-    &:disabled {
-        background-color: rgba(127, 27, 164, 0.5);
-    }
-    &:hover {
-        background-color: #fa9a3b;
-    }
+  background-color: #7f1ba4;
+  border-radius: 3px;
+  border-radius: 10px;
+  height: 3rem;
+  &:disabled {
+    background-color: rgba(127, 27, 164, 0.5);
+  }
+  &:hover {
+    background-color: #fff;
+    color: var(--primary-color);
+  }
+  &.btn-medium {
+    min-width: 10rem;
+  }
+}
+
+.start-demo button {
+  padding: 1rem 5rem !important;
+  height: unset !important;
+}
+
+.btn-secondary {
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, #2A2B31 0%, rgba(42, 43, 49, 0.50) 100%);
+  padding: 0.6rem 0;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+}
+
+.btn-secondary > div > span {
+  gap: 0.5rem
+}
+.btn-secondary:hover {
+  background:
+      linear-gradient(180deg, #2A2B31 0%, rgba(42, 43, 49, 0.90) 100%);
+    box-shadow: none,
+}
+
+#simplex-form  iframe{
+  border-radius: 12px;
+  overflow: hidden;
 }

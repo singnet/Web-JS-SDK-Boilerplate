@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   AppShell,
   Navbar,
@@ -8,17 +8,20 @@ import {
   useMantineTheme,
   createStyles,
   Group,
-  ScrollArea
-} from '@mantine/core';
-import { ReactComponent as SnetLogo } from './resources/assets/images/logo.svg';
-import { useMediaQuery } from '@mantine/hooks';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Link, useLocation } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import { Login } from './Login';
-import { ZeroDevWeb3Auth } from '@zerodev/web3auth';
-import { useBalance } from 'wagmi';
-import './global.css';
+  ScrollArea,
+  Button,
+} from "@mantine/core";
+import { ReactComponent as SnetLogo } from "./resources/assets/images/logo.svg";
+import { ReactComponent as WalletIcon } from "./resources/assets/images/wallet.svg";
+import { ReactComponent as LogoutIcon } from "./resources/assets/images/logout.svg";
+import { useMediaQuery } from "@mantine/hooks";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Link, useLocation } from "react-router-dom";
+import { useAccount } from "wagmi";
+import { Login } from "./Login";
+import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
+import { useBalance, useDisconnect } from "wagmi";
+import "./global.css";
 
 const useStyles = createStyles((theme, _params) => {
   return {
@@ -26,50 +29,87 @@ const useStyles = createStyles((theme, _params) => {
       paddingBottom: theme.spacing.md,
       marginBottom: theme.spacing.md * 1.5,
       borderBottom: `1px solid ${
-        theme.colorScheme === 'dark'
+        theme.colorScheme === "dark"
           ? theme.colors.dark[4]
           : theme.colors.gray[2]
-      }`
+      }`,
+    },
+
+    main: {
+      paddingLeft: '2rem',
+      paddingTop: '1rem'
     },
 
     footer: {
       paddingTop: theme.spacing.md,
       marginTop: theme.spacing.md,
-      borderTop: `1px solid ${
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[4]
-          : theme.colors.gray[2]
-      }`
     },
     navbar: {
-      backgroundColor: '#7F1BA4'
+      backgroundColor: "#7F1BA4",
+      borderRadius: "10px",
+      border: "1px solid rgba(41, 41, 47, 0.40)",
+      background: "#161618",
+      margin: "1rem",
+      height: "calc(100vh - 2rem)",
+    },
+
+    walletInfo: {
+      display: 'flex',
+      justifyContent: 'flex-end'
+    },
+
+    walletDetails: {
+      borderRadius: "10px",
+      background:
+        "linear-gradient(110deg, rgba(90, 77, 255, 0.70) 1.33%, rgba(127, 27, 164, 0.70) 57.43%, rgba(252, 157, 57, 0.70) 119.39%)",
+      backdropFilter: "blur(25px)",
+      padding: "0.8rem 1rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "0.4rem",
+      h4: {
+        margin: 0,
+        fontWeight: 500,
+        fontSize: "1rem",
+        span: {
+          fontWeight: 400,
+          fontSize: "0.9rem",
+        },
+      },
+    },
+    walletHeading: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.2rem",
+      fontSize: "0.8rem",
     },
 
     link: {
-      fontFamily: 'alias',
-      display: 'flex',
-      alignItems: 'center',
-      textDecoration: 'none',
+      fontFamily: "var(--base-font)",
+      display: "flex",
+      alignItems: "center",
+      textDecoration: "none",
       fontSize: theme.fontSizes.md,
-      color: '#fff',
+      color: "#fff",
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
       marginBottom: `${theme.spacing.xs}px`,
       borderRadius: theme.radius.md,
       fontWeight: 500,
-      border: '1px solid black',
+      borderLeft: "4px solid transparent",
 
-      '&:hover': {
-        backgroundColor: theme.white,
-        color: '#7F1BA4'
-      }
+      "&:hover": {
+        borderLeft: "4px solid var(--Purple, #7F1BA4)",
+        background: "var(--Rich-Black, #0D0D0F)",
+      },
     },
 
     linkActive: {
-      '&, &:hover': {
-        backgroundColor: theme.black,
-        color: '#fff'
-      }
-    }
+      "&, &:hover": {
+        borderLeftColor: "var(--primary-color)",
+        background: "var(--Rich-Black, #0D0D0F)",
+      },
+    },
+      
   };
 });
 
@@ -86,31 +126,32 @@ export function Dashboard({ children, links }: DashboardProps) {
   const [opened, setOpened] = useState(false);
   const { pathname } = useLocation();
   const { isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   // Fetching wallet balances
   const { address } = useAccount();
-  const AGIXTokenAddress = '0x5B7533812759B45C2B44C19e320ba2cD2681b542'; // Replace with AGIX token address
+  const AGIXTokenAddress = "0x5B7533812759B45C2B44C19e320ba2cD2681b542"; // Replace with AGIX token address
   const { data: ethBalance } = useBalance({
     address: address,
-    watch: true
+    watch: true,
   });
 
   const { data: agixBalance } = useBalance({
     address: address,
     token: AGIXTokenAddress,
-    watch: true
+    watch: true,
   });
 
   // Format ETH balance to 4 decimal places
   const formattedEthBalance = ethBalance
     ? parseFloat(ethBalance.formatted).toFixed(4)
-    : 'Loading...';
+    : "Loading...";
 
   useEffect(() => {
     if (isConnected) {
       const zeroDevWeb3Auth = new ZeroDevWeb3Auth([
         process.env.REACT_APP_ZERODEV_PROJECT_ID ||
-          '46278c0a-5be6-42d6-974d-5863fc4cd132'
+          "46278c0a-5be6-42d6-974d-5863fc4cd132",
       ]);
       //   zeroDevWeb3Auth.getUserInfo().then(console.log);
     }
@@ -123,34 +164,35 @@ export function Dashboard({ children, links }: DashboardProps) {
     <AppShell
       styles={{
         main: {
-          background: theme.black
-        }
+          background: theme.black,
+          paddingTop: "1rem",
+        },
       }}
-      navbarOffsetBreakpoint='sm'
-      asideOffsetBreakpoint='sm'
+      navbarOffsetBreakpoint="sm"
+      asideOffsetBreakpoint="sm"
       navbar={
         <Navbar
-          p='md'
-          hiddenBreakpoint='sm'
+          p="md"
+          hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 120, lg: 220 }}
+          width={{ sm: 120, lg: 240 }}
           className={classes.navbar}
         >
-          <Navbar.Section grow mt='md' component={ScrollArea}>
+          <Navbar.Section grow component={ScrollArea}>
             {matches ? (
               <MediaQuery
-                largerThan={'sm'}
+                largerThan={"sm"}
                 styles={{ paddingLeft: 20, paddingRight: 20 }}
               >
-                <Group className={classes.header} position='apart'>
-                  <SnetLogo width={'100%'} />
+                <Group className={classes.header} position="apart">
+                  <SnetLogo width={"100%"} />
                 </Group>
               </MediaQuery>
             ) : null}
             {links.map((item) => (
               <Link
                 className={cx(classes.link, {
-                  [classes.linkActive]: item.path === pathname
+                  [classes.linkActive]: item.path === pathname,
                 })}
                 to={item.path}
                 key={item.label}
@@ -162,41 +204,47 @@ export function Dashboard({ children, links }: DashboardProps) {
               </Link>
             ))}
           </Navbar.Section>
-          <Navbar.Section>
+          <Navbar.Section className={classes.walletDetails}>
+            <div className={classes.walletHeading}>
+              <WalletIcon /> WALLET BALANCE
+            </div>
             <h4>
-              <b>ETH Balance:</b> {formattedEthBalance} ETH
+              <span>AGIX Token:</span> {agixBalance?.formatted ?? "Loading..."}{" "}
+              AGIX
             </h4>
             <h4>
-              <b>AGIX Balance:</b> {agixBalance?.formatted ?? 'Loading...'} AGIX
+              <span>Ethereum:</span> {formattedEthBalance} ETH
             </h4>
           </Navbar.Section>
-          {mdMatches && (
-            <Navbar.Section className={classes.footer}>
-              <div className='ConnectedButtonClass'>
-                <ConnectButton />
-              </div>
-            </Navbar.Section>
-          )}
+          <Button
+            variant="filled"
+            className="btn-secondary"
+            onClick={() => {
+              disconnect();
+            }}
+          >
+            <LogoutIcon /> <span>Disconnect</span>
+          </Button>
         </Navbar>
       }
       header={
         matches ? undefined : (
-          <MediaQuery largerThan='sm' styles={{ display: 'none' }}>
-            <Header height={{ base: 50, md: 70 }} p='md'>
+          <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+            <Header height={{ base: 50, md: 70 }} p="md">
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'flex-start',
-                  height: '100%'
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  height: "100%",
                 }}
               >
                 <Burger
                   opened={opened}
                   onClick={() => setOpened((o) => !o)}
-                  size='sm'
+                  size="sm"
                   color={theme.colors.gray[6]}
-                  mr='sm'
+                  mr="sm"
                 />
 
                 <SnetLogo height={30} width={116} />
@@ -206,7 +254,16 @@ export function Dashboard({ children, links }: DashboardProps) {
         )
       }
     >
-      {children}
+      {mdMatches && (
+        <Navbar.Section className={classes.walletInfo}>
+          <div className="ConnectedButtonClass">
+            <ConnectButton showBalance={false} />
+          </div>
+        </Navbar.Section>
+      )}
+      <div className={classes.main}>
+        {children}
+      </div>
     </AppShell>
   );
 }

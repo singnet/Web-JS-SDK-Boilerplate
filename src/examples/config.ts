@@ -1,7 +1,7 @@
 export const config = {
-    "web3Provider": (window as any)?.web3.currentProvider,
+    "web3Provider": (window as any)?.web3?.currentProvider || undefined,
     "networkId": "1",
-    "ipfsEndpoint": "http://ipfs.singularitynet.io:80",
+    "ipfsEndpoint": "https://ipfs.singularitynet.io",
     "defaultGasPrice": "4700000",
     "defaultGasLimit": "210000",
 }

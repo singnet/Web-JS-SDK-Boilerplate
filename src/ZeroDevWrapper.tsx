@@ -4,7 +4,7 @@ import {
   configureChains,
   createConfig,
 } from "wagmi";
-import { infuraProvider } from 'wagmi/providers/infura'
+import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { polygonMumbai, goerli, mainnet } from 'wagmi/chains'
 import { connectorsForWallets, getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { 
@@ -13,8 +13,8 @@ import {
 export const projectId = 'b5486fa4-e3d9-450b-8428-646e757c10f6'
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [polygonMumbai,goerli,mainnet],
-  [infuraProvider({apiKey: 'e7732e1f679e461b9bb4da5653ac3fc2'})]
+  [mainnet],
+  [alchemyProvider({apiKey: 'TseWekjV6T0pyYUHYYCVfcFGrg4W59Zs'})]
 )
 //f36f7f706a58477884ce6fe89165666c
 const googleWalletConnectorFunction = connectorsForWallets([
