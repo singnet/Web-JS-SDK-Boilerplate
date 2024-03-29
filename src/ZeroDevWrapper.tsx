@@ -4,24 +4,41 @@ import {
   configureChains,
   createConfig,
 } from "wagmi";
-import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { polygonMumbai, goerli, mainnet } from 'wagmi/chains'
+import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { mainnet } from 'wagmi/chains'
 import { connectorsForWallets, getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
-import { 
-  googleWallet,
-} from '@zerodev/wagmi/rainbowkit'
+import { particleWallet } from '@particle-network/rainbowkit-ext';
+import { ParticleNetwork } from '@particle-network/auth';
+import { AppConfig } from "./config";
+
+
 export const projectId = 'b5486fa4-e3d9-450b-8428-646e757c10f6'
+
+new ParticleNetwork({
+  projectId: process.env.REACT_APP_PARTICLE_AUTH_PROJECT_ID as string,
+  clientKey: process.env.REACT_APP_PARTICLE_AUTH_CLIENT_KEY as string,
+  appId: process.env.REACT_APP_PARTICLE_AUTH_APP_ID as string,
+});
+
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet],
-  [alchemyProvider({apiKey: 'TseWekjV6T0pyYUHYYCVfcFGrg4W59Zs'})]
+  [alchemyProvider({apiKey: AppConfig.ALCHEMY_API_KEY})]
 )
+
+const particleWallets = [
+  particleWallet({ chains, authType: 'google' }),
+  particleWallet({ chains, authType: 'facebook' }),
+  particleWallet({ chains, authType: 'apple' }),
+  particleWallet({ chains }),
+];
+
 //f36f7f706a58477884ce6fe89165666c
 const googleWalletConnectorFunction = connectorsForWallets([
   {
     groupName: 'Social',
       wallets: [
-        googleWallet({chains, options: { projectId}})
+        ...particleWallets
     ],
   },
 ]);

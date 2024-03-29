@@ -22,6 +22,7 @@ import { Login } from "./Login";
 import { ZeroDevWeb3Auth } from "@zerodev/web3auth";
 import { useBalance, useDisconnect } from "wagmi";
 import "./global.css";
+import { AppConfig } from "./config";
 
 const useStyles = createStyles((theme, _params) => {
   return {
@@ -130,7 +131,7 @@ export function Dashboard({ children, links }: DashboardProps) {
 
   // Fetching wallet balances
   const { address } = useAccount();
-  const AGIXTokenAddress = "0x5B7533812759B45C2B44C19e320ba2cD2681b542"; // Replace with AGIX token address
+  const AGIXTokenAddress: any = AppConfig.AGIX_TOKEN; // Replace with AGIX token address
   const { data: ethBalance } = useBalance({
     address: address,
     watch: true,
@@ -151,7 +152,7 @@ export function Dashboard({ children, links }: DashboardProps) {
     if (isConnected) {
       const zeroDevWeb3Auth = new ZeroDevWeb3Auth([
         process.env.REACT_APP_ZERODEV_PROJECT_ID ||
-          "46278c0a-5be6-42d6-974d-5863fc4cd132",
+          "ee19c5e2-578e-41e9-a92a-a322b08f2343",
       ]);
       //   zeroDevWeb3Auth.getUserInfo().then(console.log);
     }

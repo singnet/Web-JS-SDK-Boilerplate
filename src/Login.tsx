@@ -19,6 +19,7 @@ const useStyles = createStyles((theme) => ({
     '@media (max-width: 755px)': {
       paddingTop: 80,
       paddingBottom: 60,
+      textAlign: 'center'
     },
   },
 
@@ -32,7 +33,16 @@ const useStyles = createStyles((theme) => ({
     fontFamily: 'var(--base-font)',
 
     '@media (max-width: 520px)': {
-      fontSize: 28,
+      fontSize: 26,
+      maxWidth: '320px',
+    },
+  },
+
+  logo: {
+    '@media (max-width: 520px)': {
+      width: '12rem',
+      position: 'relative',
+      top: '2rem'
     },
   },
 
@@ -42,6 +52,12 @@ const useStyles = createStyles((theme) => ({
 
   introVideo: {
     mixBlendMode: 'screen'
+  },
+
+  description: {
+    '@media (max-width: 520px)': {
+      maxWidth: '80%',
+    },
   }
 }));
 
@@ -52,15 +68,15 @@ export function Login() {
     <div className={classes.wrapper}>
       <Container>
         <Flex justify={"center"} align="center" mih={'100%'} direction={'column'} gap={30}>
-          <ZeroDevLogo width={300} height={'100%'} />
+          <ZeroDevLogo className={classes.logo} width={300} height={'100%'} />
           <video className={classes.introVideo} muted autoPlay loop src="https://res.cloudinary.com/del9jfwf0/video/upload/v1709029824/snet/wmqtoz47guk9veyglbvg.mp4" width={350} height={350} />
           <Title className={classes.title}>
-            Boilerplate Login Page with Web 2.5 & 3.0
+            Web SDK Boilerplate
           </Title>
           <div className="start-demo">
             <ConnectButton label={"Start Demo"} />
           </div>
-          If you're signing up, we will create a new AA wallet for you.
+         {/* <p className={classes.description}> If you're signing up, we will create a new AA wallet for you.</p> */}
         </Flex>
       </Container>
     </div>

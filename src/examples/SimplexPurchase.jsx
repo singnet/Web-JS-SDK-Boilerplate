@@ -1,7 +1,8 @@
-import { createStyles } from "@mantine/core";
-import React, { useEffect } from "react";
+import { Button, createStyles } from "@mantine/core";
+import React, { useEffect, useRef } from "react";
 import { ReactComponent as SingularityNetIcon } from "../resources/assets/images/singularity-net.svg";
-
+import { OnrampWebSDK } from '@onramp.money/onramp-web-sdk';
+import { useAccount } from "wagmi";
 
 let simplexLoaded = false;
 
@@ -40,53 +41,80 @@ const useStyles = createStyles((theme, _params) => {
 
 const SimplexPurchase = () => {
   const { classes, cx } = useStyles();
+  const { address } = useAccount();
+  const onrampInstance = useRef(null);
+
 
   useEffect(() => {
-    if(simplexLoaded) return;
-    simplexLoaded = true;
-    const simplexScriptId = "simplex-script";
-    const simplexFormId = "simplex-form";
+    if(!address) return;
+    onrampInstance.current = new OnrampWebSDK({
+      appId: 1, // replace this with the appID you got during onboarding process
+      walletAddress: address, // replace with user's wallet address
+      flowType: 1, // 1 -> onramp || 2 -> offramp || 3 -> Merchant checkout
+      fiatType: 3, // 1 -> INR || 2 -> TRY || 3 -> AED || 4 -> MXN || 5-> VND || 6 -> NGN etc. visit Fiat Currencies page to view full list of supported fiat currencies
+      paymentMethod: 1, // 1 -> Instant transafer(UPI) || 2 -> Bank transfer(IMPS/FAST)
+      coinCode: "AGIX", // replace with the coin code you want to buy
+    });
+    onrampInstance.current.show();
+    
+  },[])
 
-    // Clear any existing content in the simplex-form div
-    const simplexFormDiv = document.getElementById(simplexFormId);
-    if (simplexFormDiv) {
-      simplexFormDiv.innerHTML = "";
-    }
+  // useEffect(() => {
+  //   if(simplexLoaded) return;
+  //   simplexLoaded = true;
+  //   const simplexScriptId = "simplex-script";
+  //   const simplexFormId = "simplex-form";
 
-    // Check if the script already exists
-    if (!document.getElementById(simplexScriptId)) {
-      // Create the script only if it does not exist
-      const script = document.createElement("script");
-      script.id = simplexScriptId;
-      script.src = "https://iframe.sandbox.test-simplexcc.com/form.js";
-      script.async = true;
-      document.body.appendChild(script);
+  //   // Clear any existing content in the simplex-form div
+  //   const simplexFormDiv = document.getElementById(simplexFormId);
+  //   if (simplexFormDiv) {
+  //     simplexFormDiv.innerHTML = "";
+  //   }
 
-      // Initialize the Simplex form after the script is loaded
-      script.onload = () => {
-        if (window.simplex) {
-          window.simplex.createForm();
-        }
-      };
-    } else {
-      // If the script is already loaded, directly call createForm
-      if (window.simplex && !simplexLoaded) {
-        window.simplex.createForm();
-      }
-    }
+  //   // Check if the script already exists
+  //   if (!document.getElementById(simplexScriptId)) {
+  //     // Create the script only if it does not exist
+  //     const script = document.createElement("script");
+  //     script.id = simplexScriptId;
+  //     script.src = "https://iframe.sandbox.test-simplexcc.com/form.js";
+  //     script.async = true;
+  //     document.body.appendChild(script);
 
-    return () => {
-      // Optional: Cleanup if needed when the component unmounts
-      simplexLoaded = false;
-      window.simplex = undefined;
-    };
-  }, []);
+  //     // Initialize the Simplex form after the script is loaded
+  //     script.onload = () => {
+  //       if (window.simplex) {
+  //         window.simplex.createForm();
+  //       }
+  //     };
+  //   } else {
+  //     // If the script is already loaded, directly call createForm
+  //     if (window.simplex && !simplexLoaded) {
+  //       window.simplex.createForm();
+  //     }
+  //   }
+
+  //   return () => {
+  //     // Optional: Cleanup if needed when the component unmounts
+  //     simplexLoaded = false;
+  //     window.simplex = undefined;
+  //   };
+  // }, []);
 
   return (
     <div>
       <div className={classes.container}>
         <div className={classes.buyToken}>
           <h3 className={classes.heading}><SingularityNetIcon /> Buy AGIX Token</h3>
+          <Button
+            variant="filled"
+            color="rgba(127, 27, 164, 1)"
+            className="btn-primary btn-medium"
+            onClick={() => {
+              onrampInstance?.current?.show();
+            }}
+          >
+            Buy Now
+          </Button>
           <div id="simplex-form"></div>
         </div>
         <div>

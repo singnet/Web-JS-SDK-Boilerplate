@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Space, Flex, Textarea, createStyles } from "@mantine/core";
 import SnetSDK from "snet-sdk-web";
 import { example } from "../assets/summary_pb_service";
+// import { example } from "../assets/example_pb_service";
+
 import { config } from "./config";
 import { useAccount } from "wagmi";
 
@@ -80,6 +82,7 @@ const useStyles = createStyles((theme, _params) => {
       overflowY: "auto",
       marginTop: "1.5rem",
       padding: "1rem",
+      scrollBehavior: 'smooth' 
     },
     clearLog: {
       position: "absolute",
@@ -119,8 +122,17 @@ export default function ExampleService() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
+  const logRef = useRef(null);
+
 
   const { classes, cx } = useStyles();
+
+  const scrollToBottom = () => {
+    if (logRef.current) {
+      const scrollHeight = logRef.current.scrollHeight;
+      logRef.current.scrollTo(0, scrollHeight);
+    }
+  };
 
   const newChat = (type: "user" | "bot", message: string) => {
     setChats((prevChats) => [...prevChats, { type, message }]);
@@ -154,9 +166,15 @@ export default function ExampleService() {
       const provider = await connector.getProvider();
       const sdk = new SnetSDK({ ...config, web3Provider: provider });
       const client = await sdk.createServiceClient("snet", "news-summary");
+      // const client = await sdk.createServiceClient("masp", "masp_s1");
+
 
       const request = new example.TextSummary.summary.requestType();
       request.setArticleContent(userInput);
+
+      // const request = new example.Calculator.add.requestType();
+      // request.setA(5);
+      // request.setB(20);
 
       const invokeOptions = {
         request: request,
@@ -166,11 +184,14 @@ export default function ExampleService() {
           setIsLoading(false);
           if (response.status === 0) {
             const value = response.message.getArticleSummary();
+            // const value = response.message.getValue();
+
             setResult(value);
             newChat("bot", value.toString());
             console.log("--- Service Response ---", value.toString());
             return;
           }
+          setIsLoading(false);
           console.error("error occured", response.status, response.message);
         },
       };
@@ -178,15 +199,23 @@ export default function ExampleService() {
       
 
       await client.unary(example.TextSummary.summary, invokeOptions);
+      // await client.unary(example.Calculator.add, invokeOptions);
     } catch (error) {
-      console.log("error", error);
+      // console.log("error", error);
+      console.trace(error);
+      console.error(error.message)
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Override console logging methods with custom logging wrapper
+    scrollToBottom();
+  },[logs])
+
+  useEffect(() => {
+    console.debug = console.log;
+    // // Override console logging methods with custom logging wrapper
     ["log", "error", "warn", "info", "debug"].forEach((method) => {
       const originalConsoleMethod = console[method];
       console[method] = (...args) => {
@@ -269,7 +298,7 @@ export default function ExampleService() {
           </Button>
         )}
 
-        <div className={classes.logs}>
+        <div className={classes.logs} ref={logRef}>
           {logs.map((log, index) => {
             if (log.message === "{}" || log.message === "") return <></>;
             return (
