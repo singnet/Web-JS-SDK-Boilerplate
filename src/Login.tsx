@@ -69,7 +69,7 @@ export function Login() {
       <Container>
         <Flex justify={"center"} align="center" mih={'100%'} direction={'column'} gap={30}>
           <ZeroDevLogo className={classes.logo} width={300} height={'100%'} />
-          <video className={classes.introVideo} muted autoPlay loop src="https://res.cloudinary.com/del9jfwf0/video/upload/v1709029824/snet/wmqtoz47guk9veyglbvg.mp4" width={350} height={350} />
+          <video className={classes.introVideo} muted autoPlay loop src="/SingularityNET_Demo-HeaderAnim.mp4" width={350} height={350} />
           <Title className={classes.title}>
             Web SDK Boilerplate
           </Title>
