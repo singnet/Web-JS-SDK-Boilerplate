@@ -10,10 +10,10 @@ Welcome to the Singularity Web SDK Boilerplate! This project demonstrates the in
 
 
 ### Service details:
-**Organization ID:** snet
-**Service:** Text Summaries(news-summary)
-**Service URL:** https://beta.singularitynet.io/servicedetails/org/snet/service/news-summary
-**Network:** Ethereum Mainnet
+**Organization ID:** snet \
+**Service:** Text Summaries(news-summary) \
+**Service URL:** https://beta.singularitynet.io/servicedetails/org/snet/service/news-summary \
+**Network:** Ethereum Mainnet \
 **Description:** This service offers a concise summary of news articles. Based on input text the service returns a summarized version of the content.
 
 
