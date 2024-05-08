@@ -21,6 +21,7 @@ Welcome to the Singularity Web SDK Boilerplate! This project demonstrates the in
 
 ### Prerequisites
 - Node.js (v18 or higher)
+- Linux based OS or a compatible Linux subsystem if you're using another OS (e.g., WSL for Windows users)
 
 ### Installation
 1. Clone the repository and navigate to the directory:
