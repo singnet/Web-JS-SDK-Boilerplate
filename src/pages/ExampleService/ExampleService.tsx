@@ -1,117 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Space, Flex, Textarea, createStyles } from "@mantine/core";
+import { Button, Textarea } from "@mantine/core";
 import SnetSDK from "snet-sdk-web";
-import { example } from "../assets/summary_pb_service";
-// import { example } from "../assets/example_pb_service";
+import { example } from "./assets/summary_pb_service";
+import styles from "./ExampleService.styles"
 
-import { config } from "./config";
+import { snetConfig } from "config/snet";
 import { useAccount } from "wagmi";
+import { serviceConfig } from "config/service";
 
 interface Chat {
   type: "user" | "bot";
   message: string;
 }
 
-const useStyles = createStyles((theme, _params) => {
-  return {
-    container: {
-      display: "grid",
-      gridTemplateColumns: "1fr 400px",
-      gap: "1rem",
-      height: "calc(100vh - 6rem)",
-    },
-    serviceCallWrapper: {
-      height: "100%",
-      display: "grid",
-      gap: "1.5rem",
-      gridTemplateRows: "120px auto 130px",
-    },
-    serviceCardWrapper: {
-      borderRadius: "var(--border-radius)",
-      background: "var(--color-gray)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "1rem 1.5rem",
-    },
-    serviceCard: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "0.3rem",
-    },
-    orgName: {
-      fontSize: "1.3rem",
-      display: "flex",
-    },
-    chatItem: {
-      borderLft: "1px solid transparent",
-      paddingLeft: "0.5rem",
-    },
-    chatItemUser: {
-      opacity: 0.8,
-      borderLeft: "1px solid #6F6F6F",
-    },
-    network: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.7rem",
-      fontWeight: 500,
-      fontSize: "0.9rem",
-      marginTop: "0.5rem",
-      img: {
-        width: "1.5rem",
-      },
-    },
-    snetIcon: {
-      width: 80,
-    },
-    responses: {
-      height: "calc(100vh - 400px)",
-      overflowY: "auto",
-    },
-    logsWrapper: {
-      height: "100%",
-      overflow: "hidden",
-      paddingTop: "3rem",
-      position: "relative",
-      borderRadius: "10px",
-      background: "rgba(22, 22, 24, 0.60)",
-    },
-    logs: {
-      height: "100%",
-      overflowY: "auto",
-      marginTop: "1.5rem",
-      padding: "1rem",
-      scrollBehavior: 'smooth' 
-    },
-    clearLog: {
-      position: "absolute",
-      top: "0.5rem",
-      right: "0.5rem",
-      padding: "1rem 3rem !important",
-      marginTop: "0 !important",
-    },
-    userInputWrapper: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-      alignItems: "flex-end",
-    },
-    userInput: {
-      width: "100%",
-      textarea: {
-        borderRadius: "10px",
-        background: "var(--color-gray)",
-        border: "1px solid rgba(255, 255, 255, 0.13)",
-        backdropFilter: "blur(250px)",
-        boxShadow: "none",
-        "&:focus": {
-          borderColor: "rgba(255, 255, 255, 0.1)",
-        },
-      },
-    },
-  };
-});
+
 
 export default function ExampleService() {
   const defaultInput =
@@ -120,12 +22,11 @@ export default function ExampleService() {
   const [userInput, setUserInput] = useState(defaultInput);
   const { connector, address } = useAccount();
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState("");
   const [chats, setChats] = useState<Chat[]>([]);
   const logRef = useRef(null);
 
 
-  const { classes, cx } = useStyles();
+  const { classes, cx } = styles();
 
   const scrollToBottom = () => {
     if (logRef.current) {
@@ -148,7 +49,7 @@ export default function ExampleService() {
       } else if (typeof arg === "object") {
         try {
           message += JSON.stringify(arg) + " ";
-        } catch {}
+        } catch { }
       } else if (["log", "error", "warn", "info", "debug"].includes(arg)) {
         method = arg;
       }
@@ -164,17 +65,12 @@ export default function ExampleService() {
 
     try {
       const provider = await connector.getProvider();
-      const sdk = new SnetSDK({ ...config, web3Provider: provider });
-      const client = await sdk.createServiceClient("snet", "news-summary");
+      const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
+      const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
       // const client = await sdk.createServiceClient("masp", "masp_s1");
-
 
       const request = new example.TextSummary.summary.requestType();
       request.setArticleContent(userInput);
-
-      // const request = new example.Calculator.add.requestType();
-      // request.setA(5);
-      // request.setB(20);
 
       const invokeOptions = {
         request: request,
@@ -184,9 +80,6 @@ export default function ExampleService() {
           setIsLoading(false);
           if (response.status === 0) {
             const value = response.message.getArticleSummary();
-            // const value = response.message.getValue();
-
-            setResult(value);
             newChat("bot", value.toString());
             console.log("--- Service Response ---", value.toString());
             return;
@@ -196,7 +89,7 @@ export default function ExampleService() {
         },
       };
 
-      
+
 
       await client.unary(example.TextSummary.summary, invokeOptions);
       // await client.unary(example.Calculator.add, invokeOptions);
@@ -211,7 +104,7 @@ export default function ExampleService() {
 
   useEffect(() => {
     scrollToBottom();
-  },[logs])
+  }, [logs])
 
   useEffect(() => {
     console.debug = console.log;
@@ -246,7 +139,7 @@ export default function ExampleService() {
             </div>
             <img className={classes.snetIcon} src="/snet-icon.png" alt="" />
           </div>
-  
+
         </div>
         <div className={classes.responses}>
           {chats.map((chat, index) => (

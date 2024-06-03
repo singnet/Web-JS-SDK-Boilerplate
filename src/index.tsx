@@ -4,8 +4,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { MantineProvider } from '@mantine/core';
-import ZeroDevWrapper from './ZeroDevWrapper';
+import ZeroDevWrapper from 'providers/ZeroDevWrapper';
 import { NotificationsProvider } from '@mantine/notifications';
+import "styles/global.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

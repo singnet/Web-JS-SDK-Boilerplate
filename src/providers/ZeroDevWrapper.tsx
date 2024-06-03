@@ -5,11 +5,11 @@ import {
   createConfig,
 } from "wagmi";
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { mainnet } from 'wagmi/chains'
+import { mainnet, sepolia } from 'wagmi/chains'
 import { connectorsForWallets, getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { particleWallet } from '@particle-network/rainbowkit-ext';
 import { ParticleNetwork } from '@particle-network/auth';
-import { AppConfig } from "./config";
+import { appConfig } from "../config/app";
 
 
 export const projectId = 'b5486fa4-e3d9-450b-8428-646e757c10f6'
@@ -22,8 +22,8 @@ new ParticleNetwork({
 
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet],
-  [alchemyProvider({apiKey: AppConfig.ALCHEMY_API_KEY})]
+  [mainnet, sepolia],
+  [alchemyProvider({ apiKey: appConfig.alchemyApiKey }),]
 )
 
 const particleWallets = [
@@ -37,8 +37,8 @@ const particleWallets = [
 const googleWalletConnectorFunction = connectorsForWallets([
   {
     groupName: 'Social',
-      wallets: [
-        ...particleWallets
+    wallets: [
+      ...particleWallets
     ],
   },
 ]);
@@ -66,15 +66,16 @@ const config = createConfig({
   webSocketPublicClient
 })
 
-function ZeroDevWrapper({children}: {children: React.ReactNode}) {
+function ZeroDevWrapper({ children }: { children: React.ReactNode }) {
   return (
     <WagmiConfig config={config}>
-    <RainbowKitProvider theme={darkTheme({
-    accentColor: '#7F1BA4',
-    accentColorForeground: 'white'})} chains={chains} modalSize="compact">
-      {children}
-    </RainbowKitProvider>
-  </WagmiConfig>
+      <RainbowKitProvider theme={darkTheme({
+        accentColor: '#7F1BA4',
+        accentColorForeground: 'white'
+      })} chains={chains} modalSize="compact">
+        {children}
+      </RainbowKitProvider>
+    </WagmiConfig>
   )
 }
 
