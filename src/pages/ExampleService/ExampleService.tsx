@@ -2,36 +2,37 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Textarea } from "@mantine/core";
 import SnetSDK from "snet-sdk-web";
 import { example } from "./assets/summary_pb_service";
-import styles from "./ExampleService.styles"
-
+import styles from "./ExampleService.styles";
 import { snetConfig } from "config/snet";
 import { useAccount } from "wagmi";
 import { serviceConfig } from "config/service";
+import ethLogo from "resources/assets/images/eth.png"
+import snetIcon from "resources/assets/images/snet-icon.png"
 
 interface Chat {
   type: "user" | "bot";
   message: string;
 }
 
+interface LogEntry {
+  method: "log" | "error" | "warn" | "info" | "debug";
+  message: string;
+}
 
-
-export default function ExampleService() {
-  const defaultInput =
-    'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
-  const [logs, setLogs] = useState([]);
-  const [userInput, setUserInput] = useState(defaultInput);
+export const ExampleService: React.FC = () => {
+  const defaultInput = 'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [userInput, setUserInput] = useState<string>(defaultInput);
   const { connector, address } = useAccount();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chats, setChats] = useState<Chat[]>([]);
-  const logRef = useRef(null);
-
+  const logRef = useRef<HTMLDivElement>(null);
 
   const { classes, cx } = styles();
 
   const scrollToBottom = () => {
     if (logRef.current) {
-      const scrollHeight = logRef.current.scrollHeight;
-      logRef.current.scrollTo(0, scrollHeight);
+      logRef.current.scrollTo(0, logRef.current.scrollHeight);
     }
   };
 
@@ -39,23 +40,10 @@ export default function ExampleService() {
     setChats((prevChats) => [...prevChats, { type, message }]);
   };
 
-  const logToScreen = (...args) => {
-    let method = "log";
-    let message = "";
-
-    args.forEach((arg) => {
-      if (typeof arg === "string") {
-        message += arg + " ";
-      } else if (typeof arg === "object") {
-        try {
-          message += JSON.stringify(arg) + " ";
-        } catch { }
-      } else if (["log", "error", "warn", "info", "debug"].includes(arg)) {
-        method = arg;
-      }
-    });
-    if (message === "" || message === "{}") return;
-    setLogs((prevLogs) => [...prevLogs, { method, message }]);
+  const logToScreen = (method: LogEntry['method'], message: string) => {
+    if (message) {
+      setLogs((prevLogs) => [...prevLogs, { method, message }]);
+    }
   };
 
   const runService = async () => {
@@ -64,10 +52,10 @@ export default function ExampleService() {
     newChat("user", userInput);
 
     try {
+      if (!connector) return;
       const provider = await connector.getProvider();
       const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
       const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
-      // const client = await sdk.createServiceClient("masp", "masp_s1");
 
       const request = new example.TextSummary.summary.requestType();
       request.setArticleContent(userInput);
@@ -76,7 +64,7 @@ export default function ExampleService() {
         request: request,
         debug: true,
         transport: undefined,
-        onEnd: (response) => {
+        onEnd: (response: any) => {
           setIsLoading(false);
           if (response.status === 0) {
             const value = response.message.getArticleSummary();
@@ -84,44 +72,35 @@ export default function ExampleService() {
             console.log("--- Service Response ---", value.toString());
             return;
           }
+          console.error("error occurred", response.status, response.message);
           setIsLoading(false);
-          console.error("error occured", response.status, response.message);
         },
       };
 
-
-
       await client.unary(example.TextSummary.summary, invokeOptions);
-      // await client.unary(example.Calculator.add, invokeOptions);
     } catch (error) {
-      // console.log("error", error);
-      console.trace(error);
-      console.error(error.message)
-    } finally {
+      console.error("Error executing service:", error);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [logs])
+  }, [logs]);
 
   useEffect(() => {
-    console.debug = console.log;
-    // // Override console logging methods with custom logging wrapper
+    const originalConsole = { ...console };
     ["log", "error", "warn", "info", "debug"].forEach((method) => {
-      const originalConsoleMethod = console[method];
-      console[method] = (...args) => {
-        originalConsoleMethod(...args);
-        logToScreen(...args);
+      (console as any)[method] = (...args: unknown[]) => {
+        (originalConsole as any)[method](...args);
+        logToScreen(method as LogEntry['method'], args.join(' '));
       };
     });
 
-    // Clean-up function to restore original console methods when the component unmounts
     return () => {
       ["log", "error", "warn", "info", "debug"].forEach((method) => {
-        console[method] = console[method].__proto__;
-      });
+        (console as any)[method] = (originalConsole as any)[method];
+      })
     };
   }, []);
 
@@ -134,10 +113,10 @@ export default function ExampleService() {
               <span className={classes.orgName}>Organization name: snet</span>
               Service name: news-summary <br />
               <span className={classes.network}>
-                <img src="/eth.png" alt="" /> Ethereum Mainnet
+                <img src={ethLogo} alt="" /> Ethereum Mainnet
               </span>
             </div>
-            <img className={classes.snetIcon} src="/snet-icon.png" alt="" />
+            <img className={classes.snetIcon} src={snetIcon} alt="" />
           </div>
 
         </div>
@@ -211,3 +190,5 @@ export default function ExampleService() {
     </div>
   );
 }
+
+export default ExampleService

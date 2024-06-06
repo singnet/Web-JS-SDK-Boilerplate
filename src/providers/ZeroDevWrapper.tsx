@@ -11,9 +11,6 @@ import { particleWallet } from '@particle-network/rainbowkit-ext';
 import { ParticleNetwork } from '@particle-network/auth';
 import { appConfig } from "../config/app";
 
-
-export const projectId = 'b5486fa4-e3d9-450b-8428-646e757c10f6'
-
 new ParticleNetwork({
   projectId: process.env.REACT_APP_PARTICLE_AUTH_PROJECT_ID as string,
   clientKey: process.env.REACT_APP_PARTICLE_AUTH_CLIENT_KEY as string,
@@ -46,7 +43,7 @@ const googleWalletConnectorFunction = connectorsForWallets([
 // Getting the connectors function from getDefaultWallets
 const defaultConnectorsFunction = getDefaultWallets({
   appName: 'Singularity',
-  projectId: '286adf4c7723d24f7380ff97351cb406',
+  projectId: appConfig.walletConnectProjectId,
   chains
 }).connectors;
 
@@ -66,13 +63,22 @@ const config = createConfig({
   webSocketPublicClient
 })
 
-function ZeroDevWrapper({ children }: { children: React.ReactNode }) {
+export interface ZeroDevWrapperProps {
+  children: React.ReactNode;
+}
+
+const ZeroDevWrapper: React.FC<ZeroDevWrapperProps> = ({ children }) => {
   return (
     <WagmiConfig config={config}>
-      <RainbowKitProvider theme={darkTheme({
-        accentColor: '#7F1BA4',
-        accentColorForeground: 'white'
-      })} chains={chains} modalSize="compact">
+      <RainbowKitProvider theme={
+        darkTheme({
+          accentColor: '#7F1BA4',
+          accentColorForeground: 'white'
+        })
+      }
+        chains={chains}
+        modalSize="compact"
+      >
         {children}
       </RainbowKitProvider>
     </WagmiConfig>

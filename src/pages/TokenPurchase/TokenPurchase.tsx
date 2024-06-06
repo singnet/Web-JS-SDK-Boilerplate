@@ -4,11 +4,12 @@ import { ReactComponent as SingularityNetIcon } from "resources/assets/images/si
 import { OnrampWebSDK } from '@onramp.money/onramp-web-sdk';
 import { useAccount } from "wagmi";
 import styles from "./TokenPurchase.styles";
+import snetThumbnail from "resources/assets/images/snet-thumbnail.jpg"
 
-const TokenPurchase = () => {
+const TokenPurchase: React.FC = () => {
   const { classes } = styles();
   const { address } = useAccount();
-  const onrampInstance = useRef(null);
+  const onrampInstance = useRef<OnrampWebSDK | null>(null);
 
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const TokenPurchase = () => {
             target="_blank"
             rel="noreferrer"
           >
-            <img src="/snet-thumbnail.jpg" alt="" />
+            <img src={snetThumbnail} alt="" />
           </a>
         </div>
       </div>

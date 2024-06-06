@@ -11,7 +11,7 @@ export interface MobileHeaderProps {
   setOpened: Dispatch<SetStateAction<boolean>>
 }
 
-export function MobileHeader({ opened, setOpened }: MobileHeaderProps) {
+const MobileHeader: React.FC<MobileHeaderProps> = ({ opened, setOpened }) => {
   const theme = useMantineTheme();
 
   return (
@@ -37,3 +37,5 @@ export function MobileHeader({ opened, setOpened }: MobileHeaderProps) {
     </Header>
   );
 }
+
+export default MobileHeader

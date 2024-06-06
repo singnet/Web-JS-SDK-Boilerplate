@@ -3,12 +3,12 @@ import {
   AppShell,
   useMantineTheme,
 } from "@mantine/core";
-import { useAccount } from "wagmi";
 import styles from "./Layout.styles";
-import { Login } from "pages/Login/Login";
-import { AppNavbar } from "components/Layout/Navbar/Navbar";
-import { MobileHeader } from "./MobileHeader/MobileHeader";
+import Login from "pages/Login/Login";
+import AppNavbar from "components/Layout/Navbar/Navbar";
+import MobileHeader from "./MobileHeader/MobileHeader";
 import { useMediaQuery } from "@mantine/hooks";
+import { useAccount } from "wagmi";
 
 export interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +17,7 @@ export interface LayoutProps {
 
 export function Layout({ children, links }: LayoutProps) {
   const { classes } = styles();
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState<boolean>(false);
   const { isConnected } = useAccount();
   const theme = useMantineTheme();
   const matches = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);

@@ -1,9 +1,10 @@
 import { createStyles } from "@mantine/core";
+import loginBg from "resources/assets/images/login-bg.jpg";
 
 export default createStyles((theme) => ({
     wrapper: {
         position: 'relative',
-        backgroundImage: `url(/login-bg.jpg)`,
+        backgroundImage: `url(${loginBg})`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center center',

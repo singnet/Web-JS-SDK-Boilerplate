@@ -23,7 +23,7 @@ export interface NavbarProps {
   setOpened: Dispatch<SetStateAction<boolean>>
 }
 
-export function AppNavbar({ links, opened, setOpened }: NavbarProps) {
+const AppNavbar: React.FC<NavbarProps> = ({ links, opened, setOpened }) => {
   const { classes, cx } = styles();
   const theme = useMantineTheme();
   const matches = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
@@ -107,3 +107,5 @@ export function AppNavbar({ links, opened, setOpened }: NavbarProps) {
     </Navbar>
   );
 }
+
+export default AppNavbar;

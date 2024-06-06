@@ -4,7 +4,6 @@ export default createStyles((theme, _params) => {
   return {
     shell: {
       background: theme.black,
-      paddingTop: '1rem'
     },
 
     main: {

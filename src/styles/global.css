@@ -7,7 +7,7 @@
 
 @font-face {
   font-family: var(--base-font);
-  src: url("../../public/Purista.ttf");
+  src: url("../resources/assets/fonts/Purista.ttf");
   font-weight: normal;
   /* Define weight, could also be 'bold', 'bolder', etc. */
   font-style: normal;
