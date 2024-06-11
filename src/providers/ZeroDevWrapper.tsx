@@ -17,7 +17,7 @@ new ParticleNetwork({
   appId: process.env.REACT_APP_PARTICLE_AUTH_APP_ID as string,
 });
 
-const currentChain = process.env.REACT_APP_NETWORK === "sepoila" ? sepolia : mainnet;
+const currentChain = process.env.REACT_APP_NETWORK === "sepolia" ? sepolia : mainnet;
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
   [currentChain],

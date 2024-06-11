@@ -1,7 +1,7 @@
 const infuraProjectId = process.env.REACT_APP_INFURA_PROJECT_ID;
-const networkId = process.env.REACT_APP_NETWORK === "sepoila" ? "11155111" : "1";
-const rpcEndpoint = process.env.REACT_APP_NETWORK === "sepoila" ?
-    `https://sepoila.infura.io/v3/${infuraProjectId}` :
+const networkId = process.env.REACT_APP_NETWORK === "sepolia" ? "11155111" : "1";
+const rpcEndpoint = process.env.REACT_APP_NETWORK === "sepolia" ?
+    `https://sepolia.infura.io/v3/${infuraProjectId}` :
     `https://mainnet.infura.io/v3/${infuraProjectId}`
 
 interface SnetConfig {

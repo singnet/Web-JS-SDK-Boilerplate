@@ -26,6 +26,8 @@ export const ExampleService: React.FC = () => {
   const { connector, address } = useAccount();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chats, setChats] = useState<Chat[]>([]);
+  const [clientSDK, setClientSDK] = useState<any | null>(null);
+  const [servicePrice, setServicePrice] = useState<number | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
 
   const { classes, cx } = styles();
@@ -46,6 +48,10 @@ export const ExampleService: React.FC = () => {
     }
   };
 
+  function convertTokenAmount(rawAmount: number, decimals: number): number {
+    return rawAmount / Math.pow(10, decimals);
+  }
+
   const runService = async () => {
     setLogs([]);
     setIsLoading(true);
@@ -53,10 +59,6 @@ export const ExampleService: React.FC = () => {
 
     try {
       if (!connector) return;
-      const provider = await connector.getProvider();
-      const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
-      const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
-
       const request = new example.TextSummary.summary.requestType();
       request.setArticleContent(userInput);
 
@@ -77,12 +79,29 @@ export const ExampleService: React.FC = () => {
         },
       };
 
-      await client.unary(example.TextSummary.summary, invokeOptions);
+      await clientSDK.unary(example.TextSummary.summary, invokeOptions);
     } catch (error) {
       console.error("Error executing service:", error);
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const getClient = async () => {
+      if (connector) {
+        setIsLoading(true);
+        const provider = await connector.getProvider();
+        const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
+        const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
+        setClientSDK(client);
+        const price = client._group.pricing.find((pricingItem: any) => pricingItem.default).price_in_cogs;
+        const priceInTokens = convertTokenAmount(price, 8);
+        setServicePrice(priceInTokens);
+        setIsLoading(false);
+      }
+    }
+    getClient();
+  }, [connector]);
 
   useEffect(() => {
     scrollToBottom();
@@ -153,7 +172,7 @@ export const ExampleService: React.FC = () => {
               runService();
             }}
           >
-            Summarize
+            Summarize {servicePrice && `(${servicePrice} AGIX)`}
           </Button>
         </div>
       </div>
