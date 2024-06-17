@@ -5,7 +5,9 @@ import App from './App';
 import { MantineProvider } from '@mantine/core';
 import ZeroDevWrapper from 'providers/ZeroDevWrapper';
 import { NotificationsProvider } from '@mantine/notifications';
+import { ToastContainer } from 'react-toastify';
 import "styles/global.css";
+import 'react-toastify/dist/ReactToastify.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,6 +18,7 @@ root.render(
     <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
       <NotificationsProvider>
         <ZeroDevWrapper>
+          <ToastContainer theme="dark" />
           <App />
         </ZeroDevWrapper>
       </NotificationsProvider>

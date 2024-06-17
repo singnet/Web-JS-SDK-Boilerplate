@@ -1,4 +1,6 @@
+const isDevMode = process.env.REACT_APP_ENV === 'production' ? false : true;
 interface AppConfig {
+    isDevMode: boolean;
     appName: string;
     alchemyApiKey: string;
     agixToken: string;
@@ -6,6 +8,7 @@ interface AppConfig {
 }
 
 export const appConfig: AppConfig = {
+    isDevMode,
     appName: 'SingularityNet',
     alchemyApiKey: process.env.REACT_APP_ALCHEMY_API_KEY || '',
     agixToken: process.env.REACT_APP_AGIX_TOKEN || '',

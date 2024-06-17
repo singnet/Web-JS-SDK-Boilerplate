@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Textarea } from "@mantine/core";
+import DebugConsole from "components/Dev/DebugConsole/DebugConsole";
 import SnetSDK from "snet-sdk-web";
 import { example } from "./assets/summary_pb_service";
 import styles from "./ExampleService.styles";
@@ -8,44 +9,31 @@ import { useAccount } from "wagmi";
 import { serviceConfig } from "config/service";
 import ethLogo from "resources/assets/images/eth.png"
 import snetIcon from "resources/assets/images/snet-icon.png"
+import { prepareWriteContract, fetchFeeData } from '@wagmi/core'
+import { toast } from 'react-toastify';
+import { appConfig } from "config/app";
+import { erc20ABI } from 'wagmi'
+
 
 interface Chat {
   type: "user" | "bot";
   message: string;
 }
 
-interface LogEntry {
-  method: "log" | "error" | "warn" | "info" | "debug";
-  message: string;
-}
-
 export const ExampleService: React.FC = () => {
   const defaultInput = 'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
-  const [logs, setLogs] = useState<LogEntry[]>([]);
   const [userInput, setUserInput] = useState<string>(defaultInput);
   const { connector, address } = useAccount();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [chats, setChats] = useState<Chat[]>([]);
   const [clientSDK, setClientSDK] = useState<any | null>(null);
   const [servicePrice, setServicePrice] = useState<number | null>(null);
-  const logRef = useRef<HTMLDivElement>(null);
+  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
 
   const { classes, cx } = styles();
 
-  const scrollToBottom = () => {
-    if (logRef.current) {
-      logRef.current.scrollTo(0, logRef.current.scrollHeight);
-    }
-  };
-
   const newChat = (type: "user" | "bot", message: string) => {
     setChats((prevChats) => [...prevChats, { type, message }]);
-  };
-
-  const logToScreen = (method: LogEntry['method'], message: string) => {
-    if (message) {
-      setLogs((prevLogs) => [...prevLogs, { method, message }]);
-    }
   };
 
   function convertTokenAmount(rawAmount: number, decimals: number): number {
@@ -53,7 +41,6 @@ export const ExampleService: React.FC = () => {
   }
 
   const runService = async () => {
-    setLogs([]);
     setIsLoading(true);
     newChat("user", userInput);
 
@@ -90,38 +77,46 @@ export const ExampleService: React.FC = () => {
     const getClient = async () => {
       if (connector) {
         setIsLoading(true);
-        const provider = await connector.getProvider();
-        const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
-        const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
-        setClientSDK(client);
-        const price = client._group.pricing.find((pricingItem: any) => pricingItem.default).price_in_cogs;
-        const priceInTokens = convertTokenAmount(price, 8);
-        setServicePrice(priceInTokens);
-        setIsLoading(false);
+        let priceInWei = null;
+        try {
+          try {
+            const provider = await connector.getProvider();
+            const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
+            const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
+            setClientSDK(client);
+            const price = client._group.pricing.find((pricingItem: any) => pricingItem.default).price_in_cogs;
+            const priceInTokens = convertTokenAmount(price, 8);
+            priceInWei = BigInt(price * 10);
+            setServicePrice(priceInTokens);
+          } catch (error) {
+            throw new Error('Error getting service metadata');
+          }
+          try {
+            const feeData = await fetchFeeData()
+            if (feeData.gasPrice) {
+              await prepareWriteContract({
+                address: appConfig.agixToken as `0x${string}`,
+                abi: erc20ABI,
+                gas: 50000n,
+                gasPrice: feeData.gasPrice,
+                functionName: 'approve',
+                args: [address as `0x${string}`, priceInWei]
+              })
+              setButtonDisabled(false);
+            }
+          } catch (error) {
+            throw new Error('Error getting transaction fee');
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error(String(error));
+        } finally {
+          setIsLoading(false);
+        }
       }
     }
     getClient();
-  }, [connector]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [logs]);
-
-  useEffect(() => {
-    const originalConsole = { ...console };
-    ["log", "error", "warn", "info", "debug"].forEach((method) => {
-      (console as any)[method] = (...args: unknown[]) => {
-        (originalConsole as any)[method](...args);
-        logToScreen(method as LogEntry['method'], args.join(' '));
-      };
-    });
-
-    return () => {
-      ["log", "error", "warn", "info", "debug"].forEach((method) => {
-        (console as any)[method] = (originalConsole as any)[method];
-      })
-    };
-  }, []);
+  }, [connector, address]);
 
   return (
     <div className={classes.container}>
@@ -164,7 +159,7 @@ export const ExampleService: React.FC = () => {
           />
           <Button
             loading={isLoading}
-            disabled={!address}
+            disabled={buttonDisabled}
             variant="filled"
             color="rgba(127, 27, 164, 1)"
             className="btn-primary btn-medium"
@@ -176,36 +171,7 @@ export const ExampleService: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className={classes.logsWrapper}>
-        {logs.length > 0 && (
-          <Button
-            variant="filled"
-            className={cx("btn-secondary", classes.clearLog)}
-            onClick={() => {
-              setLogs([]);
-            }}
-          >
-            Clear Log
-          </Button>
-        )}
-
-        <div className={classes.logs} ref={logRef}>
-          {logs.map((log, index) => {
-            if (log.message === "{}" || log.message === "") return <></>;
-            return (
-              <p
-                key={index}
-                style={{
-                  color: log.method === "error" ? "red" : "#f1f1f1",
-                  margin: "3px",
-                }}
-              >
-                <strong>{log.method.toUpperCase()}:</strong> {log.message}
-              </p>
-            );
-          })}
-        </div>
-      </div>
+      {appConfig.isDevMode && <DebugConsole />}
     </div>
   );
 }

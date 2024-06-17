@@ -3,12 +3,12 @@ import { createStyles } from "@mantine/core";
 export default createStyles((theme, _params) => {
     return {
         container: {
-            display: "grid",
-            gridTemplateColumns: "1fr 400px",
+            display: "flex",
             gap: "1rem",
             height: "calc(100vh - 6rem)",
         },
         serviceCallWrapper: {
+            flex: "1",
             height: "100%",
             display: "grid",
             gap: "1.5rem",
@@ -56,28 +56,6 @@ export default createStyles((theme, _params) => {
         responses: {
             height: "calc(100vh - 400px)",
             overflowY: "auto",
-        },
-        logsWrapper: {
-            height: "100%",
-            overflow: "hidden",
-            paddingTop: "3rem",
-            position: "relative",
-            borderRadius: "10px",
-            background: "rgba(22, 22, 24, 0.60)",
-        },
-        logs: {
-            height: "100%",
-            overflowY: "auto",
-            marginTop: "1.5rem",
-            padding: "1rem",
-            scrollBehavior: 'smooth'
-        },
-        clearLog: {
-            position: "absolute",
-            top: "0.5rem",
-            right: "0.5rem",
-            padding: "1rem 3rem !important",
-            marginTop: "0 !important",
         },
         userInputWrapper: {
             display: "flex",
