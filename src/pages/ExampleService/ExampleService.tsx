@@ -1,19 +1,14 @@
-import { useEffect, useState } from "react";
-import { Button, Textarea } from "@mantine/core";
+import { useState } from "react";
+import { Textarea } from "@mantine/core";
 import DebugConsole from "components/Dev/DebugConsole/DebugConsole";
-import SnetSDK from "snet-sdk-web";
 import { example } from "./assets/summary_pb_service";
 import styles from "./ExampleService.styles";
-import { snetConfig } from "config/snet";
 import { useAccount } from "wagmi";
-import { serviceConfig } from "config/service";
 import ethLogo from "resources/assets/images/eth.png"
 import snetIcon from "resources/assets/images/snet-icon.png"
-import { prepareWriteContract, fetchFeeData } from '@wagmi/core'
-import { toast } from 'react-toastify';
 import { appConfig } from "config/app";
-import { erc20ABI } from 'wagmi'
-
+import { useSdk } from "providers/ServiceMetadataProvider";
+import { ActionButton } from "components/UI/ActionButton";
 
 interface Chat {
   type: "user" | "bot";
@@ -22,23 +17,16 @@ interface Chat {
 
 export const ExampleService: React.FC = () => {
   const defaultInput = 'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
-  const [userInput, setUserInput] = useState<string>(defaultInput);
-  const { connector, address } = useAccount();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { connector } = useAccount();
+  const { clientSDK, setIsLoading } = useSdk();
   const [chats, setChats] = useState<Chat[]>([]);
-  const [clientSDK, setClientSDK] = useState<any | null>(null);
-  const [servicePrice, setServicePrice] = useState<number | null>(null);
-  const [buttonDisabled, setButtonDisabled] = useState<boolean>(true);
+  const [userInput, setUserInput] = useState<string>(defaultInput);
 
   const { classes, cx } = styles();
 
   const newChat = (type: "user" | "bot", message: string) => {
     setChats((prevChats) => [...prevChats, { type, message }]);
   };
-
-  function convertTokenAmount(rawAmount: number, decimals: number): number {
-    return rawAmount / Math.pow(10, decimals);
-  }
 
   const runService = async () => {
     setIsLoading(true);
@@ -72,51 +60,6 @@ export const ExampleService: React.FC = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    const getClient = async () => {
-      if (connector) {
-        setIsLoading(true);
-        let priceInWei = null;
-        try {
-          try {
-            const provider = await connector.getProvider();
-            const sdk = new SnetSDK({ ...snetConfig, web3Provider: provider });
-            const client = await sdk.createServiceClient(serviceConfig.orgId, serviceConfig.serviceId);
-            setClientSDK(client);
-            const price = client._group.pricing.find((pricingItem: any) => pricingItem.default).price_in_cogs;
-            const priceInTokens = convertTokenAmount(price, 8);
-            priceInWei = BigInt(price * 10);
-            setServicePrice(priceInTokens);
-          } catch (error) {
-            throw new Error('Error getting service metadata');
-          }
-          try {
-            const feeData = await fetchFeeData()
-            if (feeData.gasPrice) {
-              await prepareWriteContract({
-                address: appConfig.agixToken as `0x${string}`,
-                abi: erc20ABI,
-                gas: 50000n,
-                gasPrice: feeData.gasPrice,
-                functionName: 'approve',
-                args: [address as `0x${string}`, priceInWei]
-              })
-              setButtonDisabled(false);
-            }
-          } catch (error) {
-            throw new Error('Error getting transaction fee');
-          }
-        } catch (error) {
-          console.log(error);
-          toast.error(String(error));
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    }
-    getClient();
-  }, [connector, address]);
 
   return (
     <div className={classes.container}>
@@ -157,18 +100,13 @@ export const ExampleService: React.FC = () => {
               setUserInput(e.target.value);
             }}
           />
-          <Button
-            loading={isLoading}
-            disabled={buttonDisabled}
-            variant="filled"
-            color="rgba(127, 27, 164, 1)"
-            className="btn-primary btn-medium"
+          <ActionButton
             onClick={() => {
               runService();
             }}
           >
-            Summarize {servicePrice && `(${servicePrice} AGIX)`}
-          </Button>
+            Summarize
+          </ActionButton>
         </div>
       </div>
       {appConfig.isDevMode && <DebugConsole />}
