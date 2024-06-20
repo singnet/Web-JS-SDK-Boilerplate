@@ -35,12 +35,25 @@ cd ICP-boilerplate
 cp .env.example .env
 ```
 
-3. Install the required dependencies:
+3. Copy the .env.example file to .env and update the values as necessary:
 ```bash
-npm install
+cp .env.example .env
 ```
 
 4. Start the development server:
 ```bash
 npm start
 ```
+
+### Configuration
+To configure the project to work with your service, you need to specify the `orgId` and `serviceId` in the `src/config/service.ts` file.
+
+1. Open the `src/config/service.ts` file.
+2. Update the `orgId` and `serviceId` values to match your desired SingularityNET service.
+    ```typescript
+    orgId: "your-organization-id",
+    serviceId: "your-service-id"
+    ```
+
+### Customization
+If you want to customize the functions or the UI, you need to modify the `src/pages/ExampleService` file.
