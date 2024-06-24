@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Textarea } from "@mantine/core";
 import DebugConsole from "components/Dev/DebugConsole/DebugConsole";
-import { example } from "./assets/mainnet/summary_pb_service";
 import styles from "./ExampleService.styles";
 import { useAccount } from "wagmi";
 import ethLogo from "resources/assets/images/eth.png"
@@ -9,6 +8,7 @@ import snetIcon from "resources/assets/images/snet-icon.png"
 import { appConfig } from "config/app";
 import { useSdk } from "providers/ServiceMetadataProvider";
 import { ActionButton } from "components/UI/ActionButton";
+import { PCR } from "./assets/testnet/punctuation_capitalisation_restoration_pb_service";
 import { serviceConfig } from "config/service";
 
 interface Chat {
@@ -16,7 +16,7 @@ interface Chat {
   message: string;
 }
 
-export const ExampleService: React.FC = () => {
+export const TestExampleService: React.FC = () => {
   const defaultInput = 'Analysts are predicting record highs as a global shortage of teddy bears sweeps the nation. "The market these products is way up". The advice is to stay indoors as society collapses under the demand.';
   const { connector } = useAccount();
   const { clientSDK, setIsLoading } = useSdk();
@@ -29,38 +29,38 @@ export const ExampleService: React.FC = () => {
     setChats((prevChats) => [...prevChats, { type, message }]);
   };
 
-  const runService = async () => {
+  const parseResponse = (response: any) => {
+    setIsLoading(false);
+    if (response.status !== 0) {
+      throw new Error(response.statusMessage);
+    }
+    const serviceResponse = response.message.getText();
+    newChat("bot", serviceResponse.toString());
+    console.log("--- Service Response ---", serviceResponse.toString());
+
+  }
+
+  const submitAction = () => {
     setIsLoading(true);
     newChat("user", userInput);
-
     try {
       if (!connector) return;
-      const request = new example.TextSummary.summary.requestType();
-      request.setArticleContent(userInput);
+      let textInputValue = userInput; // user input
+      const methodDescriptor = (PCR as any).t2t;
+      const request = new methodDescriptor.requestType();
+      request.setData(textInputValue);
 
-      const invokeOptions = {
-        request: request,
-        debug: true,
-        transport: undefined,
-        onEnd: (response: any) => {
-          setIsLoading(false);
-          if (response.status === 0) {
-            const value = response.message.getArticleSummary();
-            newChat("bot", value.toString());
-            console.log("--- Service Response ---", value.toString());
-            return;
-          }
-          console.error("error occurred", response.status, response.message);
-          setIsLoading(false);
-        },
+      const props = {
+        request,
+        onEnd: (response: any) => parseResponse(response),
       };
 
-      await clientSDK.unary(example.TextSummary.summary, invokeOptions);
+      clientSDK.unary(methodDescriptor, props);
     } catch (error) {
       console.error("Error executing service:", error);
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <div className={classes.container}>
@@ -71,7 +71,7 @@ export const ExampleService: React.FC = () => {
               <span className={classes.orgName}>Organization name: {serviceConfig.orgId}</span>
               Service name: {serviceConfig.serviceId} <br />
               <span className={classes.network}>
-                <img src={ethLogo} alt="" /> Ethereum Mainnet
+                <img src={ethLogo} alt="" /> Sepolia Testnet
               </span>
             </div>
             <img className={classes.snetIcon} src={snetIcon} alt="" />
@@ -103,7 +103,7 @@ export const ExampleService: React.FC = () => {
           />
           <ActionButton
             onClick={() => {
-              runService();
+              submitAction();
             }}
           >
             Summarize
@@ -115,4 +115,4 @@ export const ExampleService: React.FC = () => {
   );
 }
 
-export default ExampleService
+export default TestExampleService
