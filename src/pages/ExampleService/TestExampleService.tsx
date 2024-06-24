@@ -55,7 +55,7 @@ export const TestExampleService: React.FC = () => {
         onEnd: (response: any) => parseResponse(response),
       };
 
-      clientSDK.unary(methodDescriptor, props);
+      await clientSDK.unary(methodDescriptor, props);
     } catch (error) {
       console.error("Error executing service:", error);
       setIsLoading(false);
