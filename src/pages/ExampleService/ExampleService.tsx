@@ -51,7 +51,6 @@ export const ExampleService: React.FC = () => {
             return;
           }
           console.error("error occurred", response.status, response.message);
-          setIsLoading(false);
         },
       };
 

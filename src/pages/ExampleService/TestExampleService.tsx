@@ -31,24 +31,23 @@ export const TestExampleService: React.FC = () => {
 
   const parseResponse = (response: any) => {
     setIsLoading(false);
-    if (response.status !== 0) {
-      throw new Error(response.statusMessage);
+    if (response.status === 0) {
+      const serviceResponse = response.message.getText();
+      newChat("bot", serviceResponse.toString());
+      console.log("--- Service Response ---", serviceResponse.toString());
+      return
     }
-    const serviceResponse = response.message.getText();
-    newChat("bot", serviceResponse.toString());
-    console.log("--- Service Response ---", serviceResponse.toString());
-
+    console.error("error occurred", response.status, response.message);
   }
 
-  const submitAction = () => {
+  const submitAction = async () => {
     setIsLoading(true);
     newChat("user", userInput);
     try {
       if (!connector) return;
-      let textInputValue = userInput; // user input
       const methodDescriptor = (PCR as any).t2t;
       const request = new methodDescriptor.requestType();
-      request.setData(textInputValue);
+      request.setData(userInput);
 
       const props = {
         request,
