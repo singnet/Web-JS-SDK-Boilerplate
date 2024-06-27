@@ -99,4 +99,29 @@ The `ExampleService/TestExampleService` component provides a user interface for 
 
 The component also displays the organization and service name configured in the `src/config/service.ts`.
 
+### Generating JavaScript Files for Your Services
 
+You will need to compile the `.proto` files from your service to JavaScript files and place them in the `src/ExampleService/assets` folder. After that, you can call functions from the generated js files in the service component, as it is done now in `ExampleService`
+```typescript
+    import { example } from "./assets/mainnet/summary_pb_service";
+    ...
+    await clientSDK.unary(example.TextSummary.summary, invokeOptions);
+```
+Apart from the steps mentioned at the official [documentation](https://github.com/improbable-eng/grpc-web/blob/master/client/grpc-web/docs/code-generation.md) to generate `js` stubs from `.proto` definitions, you also need to provide the namespace_prefix flag to the generator. Here is an example which illustrates the usage:
+
+For Linux
+```bash
+protoc \
+--plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
+--js_out=import_style=commonjs,binary,namespace_prefix=\
+[package name]_[org id]_[service]:. --ts_out=service=grpc-web:. \
+[proto file name].proto
+```
+
+For Windows CMD
+```bash
+protoc ^
+--plugin=protoc-gen-ts=%cd%/node_modules/.bin/protoc-gen-ts.cmd ^ --js_out=import_style=commonjs,binary,namespace_prefix=^
+[package name]_[org id]_[service]:. --ts_out=service=grpc-web:. ^
+[proto file name].proto
+```
