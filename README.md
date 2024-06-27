@@ -10,12 +10,21 @@ Welcome to the Singularity Web SDK Boilerplate! This project demonstrates the in
 
 
 ### Service details:
+
+By default, the project is configured with two example services: one for the Ethereum Mainnet and one for the Sepolia Testnet.
+
+#### Mainnet Example Service:
 **Organization ID:** snet \
 **Service:** Text Summaries(news-summary) \
 **Service URL:** https://beta.singularitynet.io/servicedetails/org/snet/service/news-summary \
 **Network:** Ethereum Mainnet \
 **Description:** This service offers a concise summary of news articles. Based on input text the service returns a summarized version of the content.
 
+#### Testnet Example Service:
+**Organization ID:** Naint1 \
+**Service ID:** ServNaint7 \
+**Network:** Sepolia Testnet \
+**Description:** This is an example service configured for the Sepolia Testnet.
 
 ## Getting Started
 
@@ -75,7 +84,7 @@ To configure the project to work with your service, you need to specify the `org
 
 ### ExampleService Component
 
-The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the Ethereum/Sepolia network. Below is a description of its main functions and how to use them.
+The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the `Ethereum/Sepolia` network. Below is a description of its main functions and how to use them.
 
 #### Functions
 
