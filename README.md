@@ -86,15 +86,26 @@ To configure the project to work with your service, you need to specify the `org
 
 The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the `Ethereum/Sepolia` network. Below is a description of its main functions and how to use them.
 
+#### UI Components
+- **Textarea**: The `Textarea` component is used to capture user input.
+- **ActionButton**: The `ActionButton` component is a custom button used to trigger the service call. It displays the cost of the service and shows a loading indicator when the user call process is in progress.
+- **DebugConsole**: The `DebugConsole` component is used to display debugging information when the application is in development mode. It is conditionally rendered based on the REACT_APP_ENV flag from the `.env`.
+
 #### Functions
 
-- **newChat**: Adds a new chat message to the conversation, either from the user or the bot.
-- **runService**: Sends a request to the text service with the user-provided text and handles the response. If the service returns a response successfully, it adds the response as a bot message in the chat.
+- **newChat**: Adds a new chat message to the conversation, either from the user or the bot.\
+Usage example:
+  ```typescript
+  newChat("user", "This is a user's message.");
+  newChat("bot", "This is a bot's response.");
+  ```
+- **runService**: Sends a request to the text service with the user-provided text and handles the response. If the service returns a response successfully, it adds the response as a bot message in the chat.\
+Ensure you replace the service call and response handling in the `runService` function with the appropriate calls to your own service as defined in the protobuf files.
 
 #### How to Use
 
 1. **Entering Text**: In the text area provided, users can enter the text they wish to send to service. By default, there is a sample input text provided.
-2. **Sernding request**: After entering the text, users can click the `ActionButton` button. This will add the message to chat by `newChat` function and send the text to the service by `runService` function.
+2. **Sending request**: After entering the text, users can click the `ActionButton` button. This will add the message to chat by `newChat` function and send the text to the service by `runService` function.
 3. **Viewing Responses**: The responses from the service will be displayed in the chat area by `newChat` function. User messages will be distinguished from bot responses.
 
 The component also displays the organization and service name configured in the `src/config/service.ts`.
