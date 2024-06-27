@@ -105,7 +105,7 @@ export const TestExampleService: React.FC = () => {
               submitAction();
             }}
           >
-            Summarize
+            Start service
           </ActionButton>
         </div>
       </div>

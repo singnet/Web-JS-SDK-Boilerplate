@@ -21,7 +21,6 @@ Welcome to the Singularity Web SDK Boilerplate! This project demonstrates the in
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- Linux based OS or a compatible Linux subsystem if you're using another OS (e.g., WSL for Windows users)
 
 ### Installation
 1. Clone the repository and navigate to the directory:
@@ -35,9 +34,9 @@ cd ICP-boilerplate
 cp .env.example .env
 ```
 
-3. Copy the .env.example file to .env and update the values as necessary:
+3. Install the required dependencies::
 ```bash
-cp .env.example .env
+npm install
 ```
 
 4. Start the development server:
@@ -45,8 +44,27 @@ cp .env.example .env
 npm start
 ```
 
-### Configuration
-To configure the project to work with your service, you need to specify the `orgId` and `serviceId` in the `src/config/service.ts` file.
+### Environment Variables
+The project requires certain environment variables to be set in the `.env` file. Below is a list of the required variables and their descriptions:
+
+| Variable Name                       | Description                                                                      | Where to Get It                                                  |
+|-------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------|
+| `REACT_APP_ENV`                     | Specifies the environment (`development` or `production`).                   | Set this manually.                                               |
+| `REACT_APP_ALCHEMY_API_KEY`         | API key for accessing Alchemy services.                                          | [Alchemy API Keys](https://alchemy.com)                          |
+| `REACT_APP_PARTICLE_AUTH_PROJECT_ID`| Project ID for Particle authentication.                                          | [Particle Network](https://particle.network/)                    |
+| `REACT_APP_PARTICLE_AUTH_CLIENT_KEY`| Client key for Particle authentication.                                          | [Particle Network](https://particle.network/)                    |
+| `REACT_APP_PARTICLE_AUTH_APP_ID`    | Application ID for Particle authentication.                                      | [Particle Network](https://particle.network/)                    |
+| `REACT_APP_NETWORK`                 | Specifies the blockchain network to connect to (`mainnet` or `sepolia`).                | Set this manually.                                               |
+| `REACT_APP_INFURA_PROJECT_ID`       | Project ID for accessing Infura services.                                        | [Infura](https://infura.io)                                      |
+| `REACT_APP_WALLET_CONNECT_PROJECT_ID`| Project ID for Wallet Connect integration.                                       | [Wallet Connect](https://walletconnect.com/)                     |
+
+### Configuring Service
+The components that interact with the service are located in src/pages/ExampleService.
+The app automatically chooses which service to display based on the `REACT_APP_NETWORK` selected:
+- For `sepolia`, it uses `TestExampleService`.
+- For `mainnet`, it uses `ExampleService`.
+
+To configure the project to work with your service, you need to specify the `orgId` and `serviceId` in the `src/config/service.ts` file. There are two configurations: one for mainnet and one for sepolia testnet.
 
 1. Open the `src/config/service.ts` file.
 2. Update the `orgId` and `serviceId` values to match your desired SingularityNET service.
@@ -55,5 +73,21 @@ To configure the project to work with your service, you need to specify the `org
     serviceId: "your-service-id"
     ```
 
-### Customization
-If you want to customize the functions or the UI, you need to modify the `src/pages/ExampleService` file.
+### ExampleService Component
+
+The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the Ethereum/Sepolia network. Below is a description of its main functions and how to use them.
+
+#### Functions
+
+- **newChat**: Adds a new chat message to the conversation, either from the user or the bot.
+- **runService**: Sends a request to the text service with the user-provided text and handles the response. If the service returns a response successfully, it adds the response as a bot message in the chat.
+
+#### How to Use
+
+1. **Entering Text**: In the text area provided, users can enter the text they wish to send to service. By default, there is a sample input text provided.
+2. **Sernding request**: After entering the text, users can click the `ActionButton` button. This will add the message to chat by `newChat` function and send the text to the service by `runService` function.
+3. **Viewing Responses**: The responses from the service will be displayed in the chat area by `newChat` function. User messages will be distinguished from bot responses.
+
+The component also displays the organization and service name configured in the `src/config/service.ts`.
+
+
