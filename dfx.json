@@ -1,0 +1,18 @@
+{
+  "canisters": {
+    "snet_boilerplate_icp": {
+      "source": [
+        "build"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
