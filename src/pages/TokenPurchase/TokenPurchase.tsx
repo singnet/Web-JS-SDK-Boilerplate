@@ -18,7 +18,7 @@ const TokenPurchase: React.FC = () => {
       appId: 1, // replace this with the appID you got during onboarding process
       walletAddress: address, // replace with user's wallet address
       flowType: 1, // 1 -> onramp || 2 -> offramp || 3 -> Merchant checkout
-      fiatType: 3, // 1 -> INR || 2 -> TRY || 3 -> AED || 4 -> MXN || 5-> VND || 6 -> NGN etc. visit Fiat Currencies page to view full list of supported fiat currencies
+      // fiatType: 3, // 1 -> INR || 2 -> TRY || 3 -> AED || 4 -> MXN || 5-> VND || 6 -> NGN etc. visit Fiat Currencies page to view full list of supported fiat currencies
       paymentMethod: 1, // 1 -> Instant transafer(UPI) || 2 -> Bank transfer(IMPS/FAST)
       coinCode: "AGIX", // replace with the coin code you want to buy
     });

@@ -3,7 +3,7 @@ import SnetSDK from "snet-sdk-web";
 import { toast } from 'react-toastify';
 import { prepareWriteContract, fetchFeeData } from '@wagmi/core'
 import { serviceConfig } from "config/service";
-import { erc20ABI, useAccount } from 'wagmi'
+import { erc20ABI, useAccount, useBalance } from 'wagmi'
 import { snetConfig } from "config/snet";
 import { appConfig } from 'config/app';
 
@@ -21,10 +21,17 @@ interface AuthProviderProps {
 }
 
 export const SdkProvider: React.FC<AuthProviderProps> = ({ children }) => {
+    const AGIXTokenAddress: any = appConfig.agixToken;
     const { connector, address } = useAccount();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [clientSDK, setClientSDK] = useState<any | null>(null);
     const [servicePrice, setServicePrice] = useState<number | null>(null);
+
+    const { data: agixBalance } = useBalance({
+        address: address,
+        token: AGIXTokenAddress,
+        watch: true,
+    });
 
     function convertTokenAmount(rawAmount: number, decimals: number): number {
         return rawAmount / Math.pow(10, decimals);
@@ -44,6 +51,12 @@ export const SdkProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     const priceInTokens = convertTokenAmount(price, 8);
                     priceInWei = BigInt(price * 10);
                     setServicePrice(priceInTokens);
+                    if (agixBalance) {
+                        const balanceInWei = parseFloat(agixBalance?.formatted) * Math.pow(10, agixBalance?.decimals);
+                        if (price > balanceInWei) {
+                            toast.error("Your AGIX balance is too low to call the service");
+                        }
+                    }
 
                     const feeData = await fetchFeeData();
                     if (feeData.gasPrice) {
@@ -57,8 +70,12 @@ export const SdkProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         });
                     }
                 } catch (error) {
-                    console.log(error);
-                    toast.error(String(error));
+                    if (error instanceof Error) {
+                        console.log(error.message);
+                        if (error.message.includes("insufficient funds")) {
+                            toast.error("Your Ethereum balance is too low to cover the transaction costs.");
+                        }
+                    }
                 } finally {
                     setIsLoading(false);
                 }
@@ -66,7 +83,7 @@ export const SdkProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         getClient();
-    }, [connector, address]);
+    }, [connector, address, agixBalance]);
 
     return (
         <SdkContext.Provider value={{ clientSDK, servicePrice, isLoading, setIsLoading }}>
