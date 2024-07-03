@@ -84,7 +84,7 @@ To configure the project to work with your service, you need to specify the `org
 
 ### ExampleService Component
 
-The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the `Ethereum/Sepolia` network. Below is a description of its main functions and how to use them.
+The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the `Mainnet/Sepolia` network. Below is a description of its main functions and how to use them.
 
 #### UI Components
 - **Textarea**: The `Textarea` component is used to capture user input.

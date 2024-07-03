@@ -99,7 +99,7 @@ To configure the project to work with your service, you need to specify the `org
 
 ### Adapt the ExampleService Component
 
-The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the Ethereum/Sepolia network.
+The `ExampleService/TestExampleService` component provides a user interface for interacting with your service on the Mainnet/Sepolia network.
 
 #### Make call to your service
 
