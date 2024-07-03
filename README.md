@@ -43,7 +43,7 @@ cd ICP-boilerplate
 cp .env.example .env
 ```
 
-3. Install the required dependencies::
+3. Install the required dependencies:
 ```bash
 npm install
 ```

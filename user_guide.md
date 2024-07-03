@@ -26,12 +26,12 @@ Follow these steps to set up the project:
 
 1. **Clone the repository and navigate to the directory:**
 ```bash
-   git clone https://github.com/singnet/ICP-boilerplate
-   cd ICP-boilerplate
+  git clone https://github.com/singnet/ICP-boilerplate
+  cd ICP-boilerplate
 ```
 2. **Copy the .env.example file to .env and update the values as necessary:**
 ```bash
-   cp .env.example .env
+  cp .env.example .env
 ```
 
 3. **Configure environment variables**
@@ -49,9 +49,14 @@ The project requires certain environment variables to be set in the `.env` file.
 | `REACT_APP_INFURA_PROJECT_ID`        | Project ID for accessing Infura services.               | [Infura](https://infura.io)          |
 | `REACT_APP_WALLET_CONNECT_PROJECT_ID`| Project ID for Wallet Connect integration.              | [Wallet Connect](https://walletconnect.com/) |
 
-4. **Start the development server:**
+4. **Install the required dependencies:**
 ```bash
-   npm start
+  npm install
+```
+
+5. **Start the development server:**
+```bash
+  npm start
 ```
 
 After setting up, you can run the project on `localhost:3000` to see it in action. The project comes pre-configured with two example services: one for the Ethereum Mainnet and one for the Sepolia Testnet. You can connect your wallet and send a message to the example service to see how it works.
