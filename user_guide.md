@@ -8,7 +8,7 @@ Before you begin, ensure you have the `Node.js (v18 or higher)` installed on you
 
 If you don't have Node.js installed, you can follow the official installation instructions provided by Node.js:
 
-Go to the official Node.js website: Node.js Download.
+Go to the official Node.js website: [Node.js Download.](https://nodejs.org/en)
 Follow the instructions for your specific operating system (Windows, macOS, or Linux).
 These instructions will guide you through the process of downloading and installing the latest version of Node.js, including npm, the Node.js package manager.
 
@@ -49,10 +49,12 @@ The project requires certain environment variables to be set in the `.env` file.
 | `REACT_APP_INFURA_PROJECT_ID`        | Project ID for accessing Infura services.               | [Infura](https://infura.io)          |
 | `REACT_APP_WALLET_CONNECT_PROJECT_ID`| Project ID for Wallet Connect integration.              | [Wallet Connect](https://walletconnect.com/) |
 
-4. **Install the required dependencies:**
+4. **Start the development server:**
 ```bash
-   npm install
+   npm start
 ```
+
+After setting up, you can run the project on `localhost:3000` to see it in action. The project comes pre-configured with two example services: one for the Ethereum Mainnet and one for the Sepolia Testnet. You can connect your wallet and send a message to the example service to see how it works.
 
 ## Step 3. Generating JavaScript Files for Your Services
 
@@ -80,8 +82,6 @@ After that you need to place them in the `src/ExampleService/assets` folder to u
 
 
 ## Step 4. Interact with your service
-
-The project comes pre-configured with two example services: one for the Ethereum Mainnet and one for the Sepolia Testnet. You can interact with these services through the `ExampleService` and `TestExampleService` components.
 
 ### Configure the Service
 
@@ -122,12 +122,6 @@ The `ExampleService/TestExampleService` component provides a user interface for 
   newChat("user", "This is a user's message.");
   newChat("bot", "This is a bot's response.");
 ```
-
-### How to Use
-
-1. **Entering Text**: Enter the text in the provided text area.
-2. **Sending Request**: Click the `ActionButton` to send the text to the service.
-3. **Viewing Responses**: Responses from the service will be displayed in the chat area.
 
 ## Step 5. Deploy project to Internet Computer (ICP)
 
