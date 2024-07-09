@@ -10,6 +10,7 @@ import { appConfig } from "config/app";
 import { useSdk } from "providers/ServiceMetadataProvider";
 import { ActionButton } from "components/UI/ActionButton";
 import { serviceConfig } from "config/service";
+import { toast } from "react-toastify";
 
 interface Chat {
   type: "user" | "bot";
@@ -56,6 +57,7 @@ export const ExampleService: React.FC = () => {
 
       await clientSDK.unary(example.TextSummary.summary, invokeOptions);
     } catch (error) {
+      toast.error('Error executing service');
       console.error("Error executing service:", error);
       setIsLoading(false);
     }

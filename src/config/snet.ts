@@ -16,6 +16,6 @@ export const snetConfig: SnetConfig = {
     "networkId": networkId,
     "ipfsEndpoint": "https://ipfs.singularitynet.io",
     "defaultGasPrice": "12000000",
-    "defaultGasLimit": "6100000",
+    "defaultGasLimit": "9100000",
     "rpcEndpoint": rpcEndpoint,
 }

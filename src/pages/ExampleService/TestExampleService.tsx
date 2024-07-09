@@ -10,6 +10,7 @@ import { useSdk } from "providers/ServiceMetadataProvider";
 import { ActionButton } from "components/UI/ActionButton";
 import { PCR } from "./assets/testnet/punctuation_capitalisation_restoration_pb_service";
 import { serviceConfig } from "config/service";
+import { toast } from "react-toastify";
 
 interface Chat {
   type: "user" | "bot";
@@ -56,6 +57,7 @@ export const TestExampleService: React.FC = () => {
 
       await clientSDK.unary(methodDescriptor, props);
     } catch (error) {
+      toast.error('Error executing service');
       console.error("Error executing service:", error);
       setIsLoading(false);
     }
