@@ -13,23 +13,26 @@ Follow the instructions for your specific operating system (Windows, macOS, or L
 These instructions will guide you through the process of downloading and installing the latest version of Node.js, including npm, the Node.js package manager.
 
 After installation, verify that Node.js was installed correctly by running the following command in your terminal:
+
 ```bash
   node -v
 ```
+
 Ensure that the version displayed is v18 or higher.
-
-
 
 ## Step 2. Installation
 
 Follow these steps to set up the project:
 
 1. **Clone the repository and navigate to the directory:**
+
 ```bash
-  git clone https://github.com/singnet/ICP-boilerplate
-  cd ICP-boilerplate
+  git clone https://github.com/singnet/Web-JS-SDK-Boilerplate
+  cd Web-JS-SDK-Boilerplate
 ```
+
 2. **Copy the .env.example file to .env and update the values as necessary:**
+
 ```bash
   cp .env.example .env
 ```
@@ -38,23 +41,25 @@ Follow these steps to set up the project:
 
 The project requires certain environment variables to be set in the `.env` file. Below is a list of the required variables and their descriptions:
 
-| Variable Name                        | Description                                             | Where to Get It                      |
-|--------------------------------------|---------------------------------------------------------|--------------------------------------|
-| `REACT_APP_ENV`                      | Specifies the environment (`development` or `production`). | Set this manually.                   |
-| `REACT_APP_ALCHEMY_API_KEY`          | API key for accessing Alchemy services.                 | [Alchemy API Keys](https://alchemy.com) |
-| `REACT_APP_PARTICLE_AUTH_PROJECT_ID` | Project ID for Particle authentication.                 | [Particle Network](https://particle.network/) |
-| `REACT_APP_PARTICLE_AUTH_CLIENT_KEY` | Client key for Particle authentication.                 | [Particle Network](https://particle.network/) |
-| `REACT_APP_PARTICLE_AUTH_APP_ID`     | Application ID for Particle authentication.             | [Particle Network](https://particle.network/) |
-| `REACT_APP_NETWORK`                  | Specifies the blockchain network to connect to (`mainnet` or `sepolia`). | Set this manually.                   |
-| `REACT_APP_INFURA_PROJECT_ID`        | Project ID for accessing Infura services.               | [Infura](https://infura.io)          |
-| `REACT_APP_WALLET_CONNECT_PROJECT_ID`| Project ID for Wallet Connect integration.              | [Wallet Connect](https://walletconnect.com/) |
+| Variable Name                         | Description                                                              | Where to Get It                               |
+| ------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------- |
+| `REACT_APP_ENV`                       | Specifies the environment (`development` or `production`).               | Set this manually.                            |
+| `REACT_APP_ALCHEMY_API_KEY`           | API key for accessing Alchemy services.                                  | [Alchemy API Keys](https://alchemy.com)       |
+| `REACT_APP_PARTICLE_AUTH_PROJECT_ID`  | Project ID for Particle authentication.                                  | [Particle Network](https://particle.network/) |
+| `REACT_APP_PARTICLE_AUTH_CLIENT_KEY`  | Client key for Particle authentication.                                  | [Particle Network](https://particle.network/) |
+| `REACT_APP_PARTICLE_AUTH_APP_ID`      | Application ID for Particle authentication.                              | [Particle Network](https://particle.network/) |
+| `REACT_APP_NETWORK`                   | Specifies the blockchain network to connect to (`mainnet` or `sepolia`). | Set this manually.                            |
+| `REACT_APP_INFURA_PROJECT_ID`         | Project ID for accessing Infura services.                                | [Infura](https://infura.io)                   |
+| `REACT_APP_WALLET_CONNECT_PROJECT_ID` | Project ID for Wallet Connect integration.                               | [Wallet Connect](https://walletconnect.com/)  |
 
 4. **Install the required dependencies:**
+
 ```bash
   npm install
 ```
 
 5. **Start the development server:**
+
 ```bash
   npm start
 ```
@@ -70,6 +75,7 @@ To interact with your own SingularityNET services, you need to compile the `.pro
 Follow the steps mentioned in the official [documentation](https://github.com/improbable-eng/grpc-web/blob/master/client/grpc-web/docs/code-generation.md) to generate `js` stubs from `.proto` definitions. Additionally, provide the `namespace_prefix` flag to the generator.
 
 #### Example Command for Linux
+
 ```bash
 protoc ^
 protoc \
@@ -77,14 +83,16 @@ protoc \
 --js_out=import_style=commonjs,binary,namespace_prefix=[package name]_[org id]_[service]:. --ts_out=service=grpc-web:. \
 [proto file name].proto
 ```
+
 #### Example Command for Windows CMD
+
 ```bash
 protoc ^
 --plugin=protoc-gen-ts=%cd%/node_modules/.bin/protoc-gen-ts.cmd ^ --js_out=import_style=commonjs,binary,namespace_prefix=[package name]_[org id]_[service]:. --ts_out=service=grpc-web:. ^
 [proto file name].proto
 ```
-After that you need to place them in the `src/ExampleService/assets` folder to use it in your service component.
 
+After that you need to place them in the `src/ExampleService/assets` folder to use it in your service component.
 
 ## Step 4. Interact with your service
 
@@ -104,42 +112,31 @@ The `ExampleService/TestExampleService` component provides a user interface for 
 #### Make call to your service
 
 1. **change `runService` function**: Send a request to your service with the user-provided text and handle the response. Replace the service call and response handling in the `runService` function with the appropriate calls to your own service as defined in the protobuf files.
-```typescript
-  import { example } from "./assets/mainnet/summary_pb_service";
 
-  async function runService(text) {
+```typescript
+import { example } from './assets/mainnet/summary_pb_service';
+
+async function runService(text) {
     const invokeOptions = {
-      request: { text: text },
-      host: "https://your-service-host",
+        request: { text: text },
+        host: 'https://your-service-host',
     };
 
     try {
-      const response = await clientSDK.unary(example.TextSummary.summary, invokeOptions);
-      newChat("bot", response.getText());
+        const response = await clientSDK.unary(
+            example.TextSummary.summary,
+            invokeOptions
+        );
+        newChat('bot', response.getText());
     } catch (error) {
-      console.error("Error running service:", error);
+        console.error('Error running service:', error);
     }
-  }
+}
 ```
 
 2. **use `newChat` funtion to display messages**: When you want to display messages from a user or a service in the chat, simply call the newChat function, providing the sender and the message.
+
 ```typescript
-  newChat("user", "This is a user's message.");
-  newChat("bot", "This is a bot's response.");
+newChat('user', "This is a user's message.");
+newChat('bot', "This is a bot's response.");
 ```
-
-## Step 5. Deploy project to Internet Computer (ICP)
-
-To deploy this project to the Internet Computer (ICP), follow these steps:
-
-1. **Build the Project**: Before deploying, build the project using the following command:
-```bash
-  npm run build
-```
-2. **Install DFX (ICP SDK)**: Install the DFX SDK by following the instructions on the official ICP documentation: [Installing DFX via DFX-VM](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/#installing-dfx-via-dfxvm).
-
-3. **Get ICP Cycles and Deploy to Mainnet**: Obtain some ICP cycles and deploy the project to the mainnet by following the instructions on the ICP documentation: [Get ICP Cycles and Deploy to Mainnet](https://internetcomputer.org/docs/current/developer-docs/getting-started/deploy/mainnet).
-
----
-
-By following this guide, you should be able to set up, configure, and use the Singularity Web SDK Boilerplate to integrate with SingularityNET services and deploy your project to the Internet Computer.

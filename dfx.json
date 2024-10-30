@@ -1,6 +1,6 @@
 {
   "canisters": {
-    "snet_boilerplate_icp": {
+    "snet_boilerplate": {
       "source": [
         "build"
       ],
